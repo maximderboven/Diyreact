@@ -18,5 +18,8 @@
     "scripts": {
         "build": "babel src/js -d dist",
         "test": "jest"
+    },
+    "dependencies": {
+        "chevrotain": "^10.4.1"
     }
 }
