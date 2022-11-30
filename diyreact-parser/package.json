@@ -1,8 +1,8 @@
 {
-    "name": "js-template-package",
+    "name": "diyreact-parser",
     "version": "1.3.0",
     "private": true,
-    "author": "Lars Willemsens",
+    "author": "Maxim Derboven",
     "license": "MIT",
     "main": "dist/index.js",
     "devDependencies": {
