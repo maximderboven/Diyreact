@@ -13,12 +13,30 @@ class DiyreactParser extends CstParser {
         const $ = this
 
         //RULES
-        $.RULE('import', () => {
-            $.CONSUME(L.Import)
-            $.CONSUME(L.Identifier)
-            $.CONSUME(L.From)
-            $.CONSUME(L.StringLiteral)
-        })
+        $.RULE('function', () => {
+                $.CONSUME(L.Export)
+                $.CONSUME(L.Default)
+                $.CONSUME(L.Function)
+                $.CONSUME(L.Identifier)
+                $.CONSUME(L.LeftBracket)
+                $.CONSUME(L.RightBracket)
+                $.CONSUME(L.LeftBrace)
+                $.SUBRULE($.render)
+                $.CONSUME(L.RightBrace)
+            }
+        )
+        $.RULE('render', () => {
+                $.CONSUME(L.Identifier)
+                $.CONSUME(L.LeftBracket)
+                $.CONSUME(L.RightBracket)
+            }
+        )
+        $.RULE('return', () => {
+                $.CONSUME(L.Return)
+                $.CONSUME(L.LeftBracket)
+                $.CONSUME(L.RightBracket)
+            }
+        )
 
 
         // very important to call this after all the rules have been setup.
