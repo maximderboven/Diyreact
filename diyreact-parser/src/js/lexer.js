@@ -7,32 +7,70 @@ const createToken = chevrotain.createToken
 const tokenVocabulary = {}
 
 //All the tokens that can be produced by the lexer
-const tokenVocubulary = {}
-const Identifier = createToken({name: 'Identifier', pattern: /[a-zA-Z_]\w*/})
-const Export = createToken({name: 'Export', pattern: /export/})
-const Default = createToken({name: 'Default', pattern: /default/})
-const Function = createToken({name: 'Function', pattern: /function/})
-const LeftBracket = createToken({name: 'LeftBracket', pattern: /\(/})
-const RightBracket = createToken({name: 'RightBracket', pattern: /\)/})
-const LeftBrace = createToken({name: 'LeftBrace', pattern: /\{/})
-const RightBrace = createToken({name: 'RightBrace', pattern: /\}/})
-const Return = createToken({name: 'Return', pattern: /return/})
+const Identifier = createToken({
+    name: "Identifier",
+    pattern: /[a-zA-Z][a-zA-Z0-9_]*/
+});
+
+const StringLiteral = createToken({
+    name: "StringLiteral",
+    pattern: /"(?:[^\\"]|\\.)*"/
+});
+
+const Whitespace = createToken({
+    name: "Whitespace",
+    pattern: /\s+/,
+    group: chevrotain.Lexer.SKIPPED
+});
+
+const SemiColon = createToken({ name: "SemiColon", pattern: ";" });
+const LeftCurly = createToken({ name: "LeftCurly", pattern: "{" });
+const RightCurly = createToken({ name: "RightCurly", pattern: "}" });
+
+const Export = createToken({ name: "Export", pattern: "export" });
+const Default = createToken({ name: "Default", pattern: "default" });
+const Function = createToken({ name: "Function", pattern: "function" });
+const Const = createToken({ name: "Const", pattern: "const" });
+const Let = createToken({ name: "Let", pattern: "let" });
+const Var = createToken({ name: "Var", pattern: "var" });
+const Return = createToken({ name: "Return", pattern: "return" });
+
+const Equal = createToken({ name: "Equal", pattern: "=" });
+const Plus = createToken({ name: "Plus", pattern: "+" });
+
+const OpenParen = createToken({ name: "OpenParen", pattern: "(" });
+const CloseParen = createToken({ name: "CloseParen", pattern: ")" });
+
+const OpenBracket = createToken({ name: "OpenBracket", pattern: /</ });
+const CloseBracket = createToken({ name: "CloseBracket", pattern: />/ });
+
+const Comma = createToken({ name: "Comma", pattern: "," });
+
 
 
 // The order of tokens is important, as the lexer uses first-match wins.
 const allTokens = [
-    Identifier,
+    SemiColon,
+    LeftCurly,
+    RightCurly,
     Export,
     Default,
+    Equal,
+    Plus,
+    OpenParen,
+    CloseParen,
+    Comma,
+    OpenBracket,
+    CloseBracket,
     Function,
-    LeftBracket,
-    RightBracket,
-    LeftBrace,
-    RightBrace,
+    Const,
+    Let,
+    Var,
     Return,
-    // The Identifier must appear after the keywords because all keywords are valid identifiers.
+    Whitespace,
+    StringLiteral,
     Identifier
-]
+];
 
 //The lexer itself
 const diyreactLexer = new chevrotain.Lexer(allTokens)

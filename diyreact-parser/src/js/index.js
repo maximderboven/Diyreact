@@ -1,18 +1,18 @@
-import * as L from './lexer';
+import * as L from './lexer'
 import DiyreactParser from './parser'
 import DiyreactVisitor from './visitor'
 
-const chevrotain = require('chevrotain');
-const path = require('path');
-const fs = require('fs');
+const chevrotain = require('chevrotain')
+const path = require('path')
+const fs = require('fs')
 
-const parser = new DiyreactParser();
-const visitor = new DiyreactVisitor(parser);
-const lexer = new chevrotain.Lexer(L.allTokens, { positionTracking: 'onlyStart' });
+const parser = new DiyreactParser()
+const visitor = new DiyreactVisitor(parser)
+const lexer = new chevrotain.Lexer(L.allTokens, {positionTracking: 'onlyStart'})
 
-export default function loader(source,map) {
+export default function loader(source, map) {
     const options = this.getOptions()
-    if('generateDiagram' in options) generateDiagram()
+    if ('generateDiagram' in options) generateDiagram()
 
     this.callback(
         null,
@@ -21,11 +21,11 @@ export default function loader(source,map) {
     )
 }
 
-export default function parse(input,options) {
-    const lexResult = lexer.tokenize(input);
-    parser.input = lexResult.tokens;
-    const cst = parser.function();
-    return visitor.visit(cst);
+export default function parse(input, options) {
+    const lexResult = lexer.tokenize(input)
+    parser.input = lexResult.tokens
+    const cst = parser.parse(lexingResult.tokens);
+    console.log(cst)
 }
 
 export default function generatediagram() {
