@@ -25,7 +25,7 @@ module.exports = {
                 loader: 'source-map-loader'
             },
             {
-                test: /\.diyr$/,
+                test: /\.jsx$/,
                 use: [
                     {loader: 'diyreact-parser'}
                 ]
