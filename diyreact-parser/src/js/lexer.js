@@ -4,7 +4,6 @@ const chevrotain = require('chevrotain')
 const createToken = chevrotain.createToken
 const DiyreactLexer = chevrotain.Lexer
 
-const tokenVocabulary = {};
 
 //All the tokens that can be produced by the lexer
 const SingleLineComment = createToken({
@@ -108,11 +107,8 @@ export const allTokens = [
     StringLiteral
 ]
 const DiyreactLexerInstance = new DiyreactLexer(allTokens, { positionTracking: 'onlyStart' })
-allTokens.forEach(tokenType => {
-    tokenVocabulary[tokenType.name] = tokenType
-})
 
-export const diyreactVocabulary = tokenVocabulary
+export const diyreactVocabulary = allTokens
 export function tokenize(input) {
     const lexResult = DiyreactLexerInstance.tokenize(input)
     if (lexResult.errors.length > 0) {
