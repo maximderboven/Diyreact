@@ -1,15 +1,33 @@
-import {parserInstance} from './parser'
+export function createVisitorClass(parser) {
+    const BaseVisitor = parser.getBaseCstVisitorConstructor()
+    return class DiyreactVisitor extends BaseVisitor {
+        constructor() {
+            super()
+            this.validateVisitor()
+        }
 
+        program(ctx) {
+            return this.visit(ctx)
+        }
 
-const GreetingVisitor = {
-    greeting: (ctx) => {
-        return ctx.Greeting.image;
-    },
-    name: (ctx) => {
-        return ctx.nameParam.image + ctx.lastNameParam.image;
+        declaration(ctx) {
+            return this.visit(ctx)
+        }
+
+        const(ctx) {
+            return this.visit(ctx)
+        }
+
+        let(ctx) {
+            return this.visit(ctx)
+        }
+
+        var(ctx) {
+            return this.visit(ctx)
+        }
+
+        expression(ctx) {
+            return this.visit(ctx)
+        }
     }
-};
-//
-// const visitor = new GreetingVisitor();
-// const greetingResult = visitor.visit(cst);
-// console.log(greetingResult); // Hello World! Jan Test
+}

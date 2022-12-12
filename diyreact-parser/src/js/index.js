@@ -1,35 +1,22 @@
-import * as L from './lexer'
 import DiyreactParser from './parser'
-import DiyreactVisitor from './visitor'
-
+import {createVisitorClass} from './visitor'
 const chevrotain = require('chevrotain')
-const path = require('path')
-const fs = require('fs')
+const L = require('./lexer')
 
-const parser = new DiyreactParser()
-const visitor = new DiyreactVisitor(parser)
-const lexer = new chevrotain.Lexer(L.allTokens, {positionTracking: 'onlyStart'})
+const input = `
+<></>
+`
 
-export default function loader(source, map) {
-    const options = this.getOptions()
-    if ('generateDiagram' in options) generateDiagram()
+export function f(input) {
+    const lexer = new chevrotain.Lexer(L.allTokens, { positionTracking: 'onlyStart' })
+    const lexingResult = lexer.tokenize(input)
+    const parser = new DiyreactParser()
+    parser.input = lexingResult.tokens
+    const cst = parser.program()
 
-    this.callback(
-        null,
-        parse(source, options),
-        map
-    )
-}
-
-export default function parse(input, options) {
-    const lexResult = lexer.tokenize(input)
-    parser.input = lexResult.tokens
-    const cst = parser.parse(lexingResult.tokens);
-    console.log(cst)
-}
-
-export default function generatediagram() {
-    const htmlText = chevrotain.createSyntaxDiagramsCode(parser.getSerializedGastProductions())
-    const outPath = path.resolve(__dirname, './')
-    fs.writeFileSync(outPath + '/generated_diagrams.html', htmlText)
+    const DiyReactToAstVisitor = new createVisitorClass(parser)
+    const visitor = new DiyReactToAstVisitor()
+    const ast = visitor.visit(cst)
+    console.log(ast)
+    return ast
 }
