@@ -8,6 +8,7 @@ const input = `
 `
 
 //JSX komt binnen en JS gaat eruit
+
 export function compile(input) {
     const lexer = new chevrotain.Lexer(L.allTokens, { positionTracking: 'onlyStart' })
     const lexingResult = lexer.tokenize(input)
