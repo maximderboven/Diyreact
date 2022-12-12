@@ -9,7 +9,7 @@ const input = `
 
 //JSX komt binnen en JS gaat eruit
 
-export function compile(input) {
+export default function loader(input) {
     const lexer = new chevrotain.Lexer(L.allTokens, { positionTracking: 'onlyStart' })
     const lexingResult = lexer.tokenize(input)
     const parser = new DiyreactParser()
