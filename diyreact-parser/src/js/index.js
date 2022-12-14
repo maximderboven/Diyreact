@@ -3,13 +3,13 @@ import {createVisitorClass} from './visitor'
 const chevrotain = require('chevrotain')
 const L = require('./lexer')
 
-const input = `
-<></>
-`
+
+export default class Diyreact {
+}
 
 //JSX komt binnen en JS gaat eruit
 
-export default function loader(input) {
+function loader(input) {
     const lexer = new chevrotain.Lexer(L.allTokens, { positionTracking: 'onlyStart' })
     const lexingResult = lexer.tokenize(input)
     const parser = new DiyreactParser()
