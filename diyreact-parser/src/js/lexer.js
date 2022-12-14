@@ -5,12 +5,13 @@ const createToken = chevrotain.createToken
 const DiyreactLexer = chevrotain.Lexer
 
 
-//All the tokens that can be produced by the lexer
+//comment
 const SingleLineComment = createToken({
     name: 'SingleLineComment',
     pattern: /\/\/.*/,
     group: chevrotain.Lexer.SKIPPED
 })
+
 const MultiLineComment = createToken({
     name: 'MultiLineComment',
     pattern: /\/\*[^`]*\*\//,
@@ -18,94 +19,111 @@ const MultiLineComment = createToken({
     group: chevrotain.Lexer.SKIPPED
 })
 
-const Comma = createToken({name: 'Comma', pattern: ','})
-const OpenParen = createToken({name: 'OpenParen', pattern: '('})
-const CloseParen = createToken({name: 'CloseParen', pattern: ')'})
-const LeftCurly = createToken({name: 'LeftCurly', pattern: '{'})
-const RightCurly = createToken({name: 'RightCurly', pattern: '}'})
-const SemiColon = createToken({name: 'SemiColon', pattern: ';', group: chevrotain.Lexer.SKIPPED})
-const Point = createToken({name: 'Point', pattern: '.'})
-const Equal = createToken({name: 'Equal', pattern: '='})
-const Operator = createToken({name: 'Operator', pattern: /[\+\-\*\/]/})
-const Not = createToken({name: 'Not', pattern: '!'})
-const And = createToken({name: 'And', pattern: '&&'})
-const Or = createToken({name: 'Or', pattern: '||'})
-const Asterisk = createToken({name: 'Asterisk', pattern: '*'})
+//symbols
+const OpenParem = createToken({ name: 'OpenParem', pattern: /\(/ })
+const CloseParem = createToken({ name: 'CloseParem', pattern: ')' })
+const LeftCurly = createToken({ name: 'LeftCurly', pattern: /{/ })
+const RightCurly = createToken({ name: 'RightCurly', pattern: '}' })
+const SemiColon = createToken({
+    name: 'SemiColon',
+    pattern: /;/,
+    group: chevrotain.Lexer.SKIPPED
+})
+const Comma = createToken({ name: 'Comma', pattern: /,/ })
+const Point = createToken({ name: 'Point', pattern: /\./ })
+const EqualSign = createToken({ name: 'EqualSign', pattern: /=/ })
+const Operator = createToken({ name: 'Operator', pattern: /-|\+|\*|\// })
+const Not = createToken({ name: 'Not', pattern: /!/ })
+const Asteric = createToken({ name: 'Asteric', pattern: /\*/ })
 
-const New = createToken({name: 'New', pattern: 'new'})
-const Const = createToken({name: 'Const', pattern: 'const'})
-const Let = createToken({name: 'Let', pattern: 'let'})
-const Var = createToken({name: 'Var', pattern: 'var'})
-const Return = createToken({name: 'Return', pattern: 'return'})
-const Function = createToken({name: 'Function', pattern: 'function'})
-const From = createToken({name: 'From', pattern: 'from'})
-const Import = createToken({name: 'Import', pattern: 'import'})
-const Require = createToken({name: 'Require', pattern: 'require'})
-const As = createToken({name: 'As', pattern: 'as'})
-const Export = createToken({name: 'Export', pattern: 'export'})
-const Default = createToken({name: 'Default', pattern: 'default'})
+//keywords
+const New = createToken({ name: 'New', pattern: /new/ })
+const VariableKey = createToken({
+    name: 'VariableKey',
+    pattern: /const|let|var/
+})
+const Return = createToken({ name: 'Return', pattern: /return/ })
+const Function = createToken({ name: 'Function', pattern: /function/ })
+const From = createToken({ name: 'From', pattern: /from/ })
+const Export = createToken({ name: 'Export', pattern: /export/ })
+const Default = createToken({ name: 'Default', pattern: /default/ })
+const Import = createToken({ name: 'Import', pattern: /import/ })
+const Require = createToken({ name: 'Require', pattern: /require/ })
+const As = createToken({ name: 'As', pattern: /as/ })
 
-const OpenTag = createToken({name: 'OpenTag', pattern: '<'})
-const CloseTag = createToken({name: 'CloseTag', pattern: '>'})
-const OpenTagSlash = createToken({name: 'OpenTagSlash', pattern: '</'})
-const CloseTagSlash = createToken({name: 'CloseTagSlash', pattern: '/>'})
-
-
-
+//identifier
 const Identifier = createToken({
     name: 'Identifier',
-    pattern: /[a-zA-Z][a-zA-Z0-9_]*/
+    pattern: /[a-zA-Z][a-zA-Z0-9]*/
+})
+
+//literal
+const Literal = createToken({
+    name: 'Literal',
+    pattern: /null|true|false|\d+(\.[0-9]+)?/
 })
 
 const StringLiteral = createToken({
     name: 'StringLiteral',
-    pattern: /"(?:[^\\"]|\\.)*"/
+    pattern: /'.*'|".*"/
 })
 
-const Whitespace = createToken({
-    name: 'Whitespace',
+const MultiLineStringLiteral = createToken({
+    name: 'MultiLineStringLiteral',
+    pattern: /`[^`]*`/,
+    line_breaks: true
+})
+
+const WhiteSpace = createToken({
+    name: 'WhiteSpace',
     pattern: /\s+/,
     group: chevrotain.Lexer.SKIPPED
 })
 
+//jsxtags
+const OpenTag = createToken({ name: 'OpeningForTag', pattern: /</ })
+const CloseTag = createToken({ name: 'CloseForTag', pattern: '>' })
+const CloseSimpleTag = createToken({ name: 'CloseSimpleTag', pattern: '/>' })
+const OpeningForSecondTag = createToken({
+    name: 'OpeningForSecondTag',
+    pattern: '</'
+})
 
-// The order of tokens is important, as the lexer uses first-match wins.
-export const allTokens = [
+const allTokens = [
     SingleLineComment,
     MultiLineComment,
-    Comma,
-    OpenParen,
-    CloseParen,
+    OpenParem,
+    CloseParem,
     LeftCurly,
     RightCurly,
     SemiColon,
+    Comma,
     Point,
-    Equal,
+    EqualSign,
+    Asteric,
+    As,
+    CloseSimpleTag,
+    OpeningForSecondTag,
     Operator,
     Not,
-    And,
-    Or,
-    Asterisk,
+    Default,
     New,
-    Const,
-    Let,
-    Var,
+    VariableKey,
     Return,
     Function,
     From,
+    Export,
     Import,
     Require,
-    As,
-    Export,
-    Default,
-    OpenTag,
-    CloseTag,
-    OpenTagSlash,
-    CloseTagSlash,
-    Whitespace,
     Identifier,
-    StringLiteral
+    Literal,
+    StringLiteral,
+    MultiLineStringLiteral,
+    WhiteSpace,
+    OpenTag,
+    CloseTag
 ]
+
 const DiyreactLexerInstance = new DiyreactLexer(allTokens, { positionTracking: 'onlyStart' })
 
 export const diyreactVocabulary = allTokens

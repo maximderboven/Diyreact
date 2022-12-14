@@ -11,10 +11,10 @@ class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
     }
 
     program(ctx) {
-        if (ctx.statement) {
+        if (typeof ctx.statement != 'undefined') {
             const statements = []
-            for (var i = 0; i < ctx.statement.length; i++) {
-                const statement = this.visit(ctx.statement[i])
+            for (let index = 0; index < ctx.statement.length; index++) {
+                const statement = this.visit(ctx.statement[index])
                 statements.push(statement)
             }
             return {
@@ -26,274 +26,637 @@ class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
             type: 'PROGRAM'
         }
     }
+
     statement(ctx) {
+        const variableDeclaration = this.visit(ctx.variableDeclaration)
+        const functionDeclaration = this.visit(ctx.functionDeclaration)
+        const callFunctionOn = this.visit(ctx.callFunctionOn)
+        const callFunction = this.visit(ctx.callFunction)
+        const importStatement = this.visit(ctx.importStatement)
+        const exportStatement = this.visit(ctx.exportStatement)
+        const returnStatement = this.visit(ctx.returnStatement)
         const statement = {
-            type: 'STATEMENT',
+            type: 'STM',
             statement: ''
         }
-        if (ctx.importStatement) {
-            statement.statement = this.visit(ctx.importStatement)
-        } else if (ctx.exportStatement) {
-            statement.statement = this.visit(ctx.exportStatement)
-        } else if (ctx.functionDeclaration) {
-            statement.statement = this.visit(ctx.functionDeclaration)
-        } else if (ctx.variableDeclaration) {
-            statement.statement = this.visit(ctx.variableDeclaration)
-        } else if (ctx.returnStatement) {
-            statement.statement = this.visit(ctx.returnStatement)
-        } else if (ctx.callFunctionOn) {
-            statement.statement = this.visit(ctx.callFunctionOn)
-        } else if (ctx.callFunction) {
-            statement.statement = this.visit(ctx.callFunction)
+        if (typeof importStatement != 'undefined') {
+            statement.statement = importStatement
+        } else if (typeof exportStatement != 'undefined') {
+            statement.statement = exportStatement
+        } else if (typeof functionDeclaration != 'undefined') {
+            statement.statement = functionDeclaration
+        } else if (typeof variableDeclaration != 'undefined') {
+            statement.statement = variableDeclaration
+        } else if (typeof returnStatement != 'undefined') {
+            statement.statement = returnStatement
+        } else if (typeof callFunctionOn != 'undefined') {
+            statement.statement = callFunctionOn
+        } else if (typeof callFunction != 'undefined') {
+            statement.statement = callFunction
         }
         return statement
     }
+
     importStatement(ctx) {
         const Import = ctx.Import[0].image
-        const Source = ctx.StringLiteral[0].image
-        const astericImport =  this.visit(ctx.astericImport)
+        const ImportSource = ctx.StringLiteral[0].image
+        const astericImport = this.visit(ctx.astericImport)
         const curlyImport = this.visit(ctx.curlyImport)
-        if (astericImport) {
+        if (typeof astericImport != 'undefined') {
+            const From = ctx.From[0].image
             return {
-                type: 'IMPORT',
-                import: Import,
+                type: 'IMP_STM',
+                Import: Import,
                 astericImport: astericImport,
-                From: ctx.From[0].image,
-                ImportSource: Source
+                From: From,
+                ImportSource: ImportSource
             }
-        } else if (curlyImport) {
+        } else if (typeof curlyImport != 'undefined') {
+            const From = ctx.From[0].image
             return {
-                type: 'IMPORT',
-                import: Import,
+                type: 'IMP_STM',
+                Import: Import,
                 curlyImport: curlyImport,
-                From: ctx.From[0].image,
-                ImportSource: Source
+                From: From,
+                ImportSource: ImportSource
             }
-        } else if (ctx.Identifier) {
+        } else if (typeof ctx.Identifier != 'undefined') {
+            const From = ctx.From[0].image
+            const Identifier = ctx.Identifier[0].image
             return {
-                type: 'IMPORT',
-                import: Import,
-                ImportName: ctx.Identifier[0].image,
-                From: ctx.From[0].image,
-                ImportSource: Source
+                type: 'IMP_STM',
+                Import: Import,
+                ImportName: Identifier,
+                From: From,
+                ImportSource: ImportSource
             }
         }
         return {
-            type: 'IMPORT',
-            import: Import,
-            ImportSource: Source
+            type: 'IMP_STM',
+            Import: Import,
+            ImportSource: ImportSource
         }
     }
 
     astericImport(ctx) {
-        const asteric = ctx.Asterisk[0].image
-        const as = ctx.As[0].image
-        const identifier = ctx.Identifier[0].image
+        const Asteric = ctx.Asteric[0].image
+        const As = ctx.As[0].image
+        const Identifier = ctx.Identifier[0].image
+
         return {
-            type: 'ASTERICIMPORT',
-            asteric: asteric,
-            as: as,
-            identifier: identifier
+            type: 'IMP_AS_STM',
+            Asteric: Asteric,
+            As: As,
+            ImportName: Identifier
         }
     }
 
     curlyImport(ctx) {
-        const curlyOpen = ctx.CurlyOpen[0].image
-        const curlyClose = ctx.CurlyClose[0].image
-        const importList = this.visit(ctx.importList)
+        const LeftCurly = ctx.LeftCurly[0].image
+        const Identifier = ctx.Identifier[0].image
+        const RightCurly = ctx.RightCurly[0].image
         return {
-            type: 'CURLYIMPORT',
-            curlyOpen: curlyOpen,
-            importList: importList,
-            curlyClose: curlyClose
+            type: 'IMP_CRL_STM',
+            LeftCurly: LeftCurly,
+            ImportName: Identifier,
+            RightCurly: RightCurly
         }
-    }
-
-    importList(ctx) {
-        const importList = []
-        for (var i = 0; i < ctx.Identifier.length; i++) {
-            const identifier = ctx.Identifier[i].image
-            importList.push(identifier)
-        }
-        return importList
     }
 
     exportStatement(ctx) {
         const Export = ctx.Export[0].image
         const variableDeclaration = this.visit(ctx.variableDeclaration)
         const functionDeclaration = this.visit(ctx.functionDeclaration)
-        if (variableDeclaration) {
-            return {
-                type: 'EXPORT',
-                export: Export,
-                variableDeclaration: variableDeclaration
+        if (typeof variableDeclaration != 'undefined') {
+            if (typeof ctx.Default != 'undefined') {
+                const Default = ctx.Default[0].image
+                return {
+                    type: 'EXP_STM',
+                    Export: Export,
+                    Default: Default,
+                    exports: variableDeclaration
+                }
             }
-        } else if (functionDeclaration) {
             return {
-                type: 'EXPORT',
-                export: Export,
-                functionDeclaration: functionDeclaration
+                type: 'EXP_STM',
+                Export: Export,
+                exports: variableDeclaration
             }
-        }
-        return {
-            type: 'EXPORT',
-            export: Export
+        } else {
+            if (typeof ctx.Default != 'undefined') {
+                const Default = ctx.Default[0].image
+                return {
+                    type: 'EXP_STM',
+                    Export: Export,
+                    Default: Default,
+                    exports: functionDeclaration
+                }
+            }
+            return {
+                type: 'EXP_STM',
+                Export: Export,
+                exports: functionDeclaration
+            }
         }
     }
 
     functionDeclaration(ctx) {
-        const functionKeyword = ctx.Function[0].image
-        const identifier = ctx.Identifier[0].image
-        const parameterList = this.visit(ctx.parameterList)
-        const block = this.visit(ctx.block)
-        return {
-            type: 'FUNCTIONDECLARATION',
-            functionKeyword: functionKeyword,
-            identifier: identifier,
-            parameterList: parameterList,
-            block: block
+        let statements
+        const FunctionKey = ctx.Function[0].image
+        const Identifier = ctx.Identifier[0].image
+        const OpenParem = ctx.OpenParem[0].image
+        const functionVariables = this.visit(ctx.functionVariables)
+        const CloseParem = ctx.CloseParem[0].image
+        const LeftCurly = ctx.LeftCurly[0].image
+        const statement = this.visit(ctx.statement)
+        const RightCurly = ctx.RightCurly[0].image
+        if (
+            typeof functionVariables != 'undefined' &&
+            typeof statement != 'undefined'
+        ) {
+            statements = new Array()
+            for (let index = 0; index < ctx.statement.length; index++) {
+                const element = this.visit(ctx.statement[index])
+                statements.push(element)
+            }
+            return {
+                type: 'FCT_STM',
+                Function: FunctionKey,
+                FunctionName: Identifier,
+                OpenParem: OpenParem,
+                functionVariables: functionVariables,
+                CloseParem: CloseParem,
+                LeftCurly: LeftCurly,
+                statement: statements,
+                RightCurly: RightCurly
+            }
+        } else if (typeof functionVariables != 'undefined') {
+            return {
+                type: 'FCT_STM',
+                Function: FunctionKey,
+                FunctionName: Identifier,
+                OpenParem: OpenParem,
+                functionVariables: functionVariables,
+                CloseParem: CloseParem,
+                LeftCurly: LeftCurly,
+                RightCurly: RightCurly
+            }
+        } else if (typeof statement != 'undefined') {
+            statements = []
+            for (let index = 0; index < ctx.statement.length; index++) {
+                const element = this.visit(ctx.statement[index])
+                statements.push(element)
+            }
+            return {
+                type: 'FCT_STM',
+                Function: FunctionKey,
+                FunctionName: Identifier,
+                OpenParem: OpenParem,
+                CloseParem: CloseParem,
+                LeftCurly: LeftCurly,
+                statement: statements,
+                RightCurly: RightCurly
+            }
+        } else {
+            return {
+                type: 'FCT_STM',
+                Function: FunctionKey,
+                FunctionName: Identifier,
+                OpenParem: OpenParem,
+                CloseParem: CloseParem,
+                LeftCurly: LeftCurly,
+                RightCurly: RightCurly
+            }
         }
     }
 
-    parameterList(ctx) {
-        const parameterList = []
-        for (var i = 0; i < ctx.Identifier.length; i++) {
-            const identifier = ctx.Identifier[i].image
-            parameterList.push(identifier)
+    functionVariables(ctx) {
+        if (typeof ctx.Identifier != 'undefined') {
+            const Identifier = ctx.Identifier[0].image
+            if (typeof ctx.Comma == 'undefined') {
+                return {
+                    VariableName: Identifier,
+                    type: 'FCT_VAR'
+                }
+            } else {
+                let elements = ''
+                const Comma = ctx.Comma[0].image
+                for (var i = 0; i < ctx.Comma.length + 1; i++) {
+                    const element = ctx.Identifier[i].image
+                    if (elements.length != 0) {
+                        elements += ','
+                    }
+                    elements += element
+                }
+                return {
+                    type: 'FCT_VAR',
+                    Variable: elements,
+                    Comma: Comma
+                }
+            }
         }
-        return parameterList
-    }
-
-    block(ctx) {
-        const block = []
-        for (var i = 0; i < ctx.statement.length; i++) {
-            const statement = this.visit(ctx.statement[i])
-            block.push(statement)
-        }
-        return block
     }
 
     variableDeclaration(ctx) {
-        const variableKeyword = ctx.Variable[0].image
-        const identifier = ctx.Identifier[0].image
-        const assignment = this.visit(ctx.assignment)
-        return {
-            type: 'VARIABLEDECLARATION',
-            variableKeyword: variableKeyword,
-            identifier: identifier,
-            assignment: assignment
+        const VariableType = ctx.VariableKey[0].image
+        const Identifier = ctx.Identifier[0].image
+        if (typeof ctx.EqualSign != 'undefined') {
+            const EqualSign = ctx.EqualSign[0].image
+            const literals = this.visit(ctx.literals)
+            const jsxExpression = this.visit(ctx.jsxExpression)
+            const operation = this.visit(ctx.operation)
+            const statement = this.visit(ctx.statement)
+            const object = {
+                type: 'VAR_STM',
+                VariableType: VariableType,
+                Identifier: Identifier,
+                EqualSign: EqualSign,
+                Value: ''
+            }
+            if (typeof literals != 'undefined') {
+                object.Value = literals
+            } else if (typeof jsxExpression != 'undefined') {
+                object.Value = jsxExpression
+            } else if (typeof statement != 'undefined') {
+                object.Value = statement
+            } else if (typeof operation != 'undefined') {
+                object.Value = operation
+            }
+            return object
+        } else {
+            return {
+                type: 'VAR_STM',
+                VariableType: VariableType,
+                Identifier: Identifier
+            }
         }
     }
 
-    assignment(ctx) {
-        const assignment = ctx.Assignment[0].image
-        const expression = this.visit(ctx.expression)
-        return {
-            type: 'ASSIGNMENT',
-            assignment: assignment,
-            expression: expression
+    literals(ctx) {
+        if (typeof ctx.Literal != 'undefined') {
+            const Literal = ctx.Literal[0].image
+            return Literal
+        } else if (typeof ctx.StringLiteral != 'undefined') {
+            const Literal = ctx.StringLiteral[0].image
+            return Literal
+        } else if (typeof ctx.MultiLineStringLiteral != 'undefined') {
+            const Literal = ctx.MultiLineStringLiteral[0].image
+            return Literal
+        }
+    }
+
+    expression(ctx) {
+        const jsxExpression = this.visit(ctx.jsxExpression)
+        const operation = this.visit(ctx.operation)
+        if (typeof jsxExpression != 'undefined') {
+            return {
+                type: 'EXPR',
+                expression: jsxExpression
+            }
+        } else if (typeof operation != 'undefined') {
+            return {
+                type: 'EXPR',
+                expression: operation
+            }
+        }
+    }
+
+    operation(ctx) {
+        const Identifier = ctx.Identifier[0].image
+        const Operator = ctx.Operator[0].image
+        if (typeof ctx.Literal != 'undefined') {
+            const Literal = ctx.Literal[0].image
+            return {
+                type: 'OP',
+                FirstPart: Identifier,
+                Operator: Operator,
+                SecondPart: Literal
+            }
+        } else {
+            const Identifier1 = ctx.Identifier[1].image
+            return {
+                type: 'OP',
+                FirstPart: Identifier,
+                Operator: Operator,
+                SecondPart: Identifier1
+            }
+        }
+    }
+
+    jsxExpression(ctx) {
+        const OpeningForTag = ctx.OpeningForTag[0].image
+        const Identifier = ctx.Identifier[0].image
+        const fullTag = this.visit(ctx.fullTag)
+
+        if (typeof ctx.Identifier[1] != 'undefined') {
+            var statements = ''
+
+            const EqualSign = ctx.EqualSign[0].image
+            for (let index = 0; index < ctx.EqualSign.length; index++) {
+                statements +=
+                    ctx.Identifier[index + 1].image +
+                    ' ' +
+                    EqualSign +
+                    ' ' +
+                    ctx.StringLiteral[index].image
+            }
+            if (typeof fullTag != 'undefined') {
+                return {
+                    type: 'JSX',
+                    OpeningForTag: OpeningForTag,
+                    FirstTag: Identifier,
+                    attributes: statements,
+                    fullTag: fullTag
+                }
+            } else {
+                const CloseSimpleTag = ctx.CloseSimpleTag[0].image
+                return {
+                    type: 'JSX',
+                    OpeningForTag: OpeningForTag,
+                    FirstTag: Identifier,
+                    attributes: statements,
+                    CloseSimpleTag: CloseSimpleTag
+                }
+            }
+        } else {
+            if (typeof fullTag != 'undefined') {
+                return {
+                    type: 'JSX',
+                    OpeningForTag: OpeningForTag,
+                    FirstTag: Identifier,
+                    fullTag: fullTag
+                }
+            } else {
+                const CloseSimpleTag = ctx.CloseSimpleTag[0].image
+                return {
+                    type: 'JSX_S',
+                    OpeningForTag: OpeningForTag,
+                    FirstTag: Identifier,
+                    CloseSimpleTag: CloseSimpleTag
+                }
+            }
+        }
+    }
+
+    fullTag(ctx) {
+        let expressions
+        const CloseForTag = ctx.CloseForTag[0].image
+        const OpeningForSecondTag = ctx.OpeningForSecondTag[0].image
+        const Identifier = ctx.Identifier[0].image
+        const jsxAllowedSymbols = this.visit(ctx.jsxAllowedSymbols)
+        const jsxExpression = this.visit(ctx.jsxExpression)
+
+        if (typeof jsxAllowedSymbols != 'undefined') {
+            var elements = ''
+            for (let index = 0; index < ctx.jsxAllowedSymbols.length; index++) {
+                const element = this.visit(ctx.jsxAllowedSymbols[index])
+                if (elements.length != 0) {
+                    elements += ' '
+                }
+                elements += element
+            }
+            if (typeof jsxExpression != 'undefined') {
+                expressions = new Array()
+                for (let index = 0; index < ctx.jsxExpression.length; index++) {
+                    const statement = this.visit(ctx.jsxExpression[index])
+                    expressions.push(statement)
+                }
+                return {
+                    type: 'JSX_F',
+                    Contents: elements,
+                    expression: expressions,
+                    OpeningForSecondTag: OpeningForSecondTag,
+                    SecondTag: Identifier,
+                    CloseForSecondTag: CloseForTag
+                }
+            } else {
+                return {
+                    type: 'JSX_F',
+                    Contents: elements,
+                    OpeningForSecondTag: OpeningForSecondTag,
+                    SecondTag: Identifier,
+                    CloseForSecondTag: CloseForTag
+                }
+            }
+        }
+        if (typeof jsxExpression != 'undefined') {
+            expressions = []
+            for (let index = 0; index < ctx.jsxExpression.length; index++) {
+                const statement = this.visit(ctx.jsxExpression[index])
+                expressions.push(statement)
+            }
+            return {
+                type: 'JSX_F',
+                expression: expressions,
+                OpeningForSecondTag: OpeningForSecondTag,
+                SecondTag: Identifier,
+                CloseForSecondTag: CloseForTag
+            }
+        } else {
+            return {
+                type: 'JSX_F',
+                OpeningForSecondTag: OpeningForSecondTag,
+                SecondTag: Identifier,
+                CloseForSecondTag: CloseForTag
+            }
+        }
+    }
+
+    jsxAllowedSymbols(ctx) {
+        if (typeof ctx.Identifier != 'undefined') {
+            const Identifier = ctx.Identifier[0].image
+            return Identifier
+        }
+        if (typeof ctx.Comma != 'undefined') {
+            const Comma = ctx.Comma[0].image
+            return Comma
+        }
+        if (typeof ctx.Point != 'undefined') {
+            const Point = ctx.Point[0].image
+            return Point
+        }
+        if (typeof ctx.Operator != 'undefined') {
+            const Operator = ctx.Operator[0].image
+            return Operator
         }
     }
 
     returnStatement(ctx) {
-        const returnKeyword = ctx.Return[0].image
+        const Return = ctx.Return[0].image
         const expression = this.visit(ctx.expression)
-        return {
-            type: 'RETURNSTATEMENT',
-            returnKeyword: returnKeyword,
-            expression: expression
+        const callFunctionOn = this.visit(ctx.callFunctionOn)
+        const callFunction = this.visit(ctx.callFunction)
+        const returnStat = {
+            type: 'RETURN_STM',
+            Return: Return,
+            returnValue: ''
         }
+        if (typeof expression != 'undefined') {
+            returnStat.returnValue = expression
+        } else if (typeof callFunctionOn != 'undefined') {
+            returnStat.returnValue = callFunctionOn
+        } else if (typeof callFunction != 'undefined') {
+            returnStat.returnValue = callFunction
+        } else {
+            const Identifier = ctx.Identifier[0].image
+            returnStat.returnValue = Identifier
+        }
+        return returnStat
     }
 
     callFunctionOn(ctx) {
-        const identifier = ctx.Identifier[0].image
-        const dot = ctx.Dot[0].image
-        const callFunction = this.visit(ctx.callFunction)
-        return {
-            type: 'CALLFUNCTIONON',
-            identifier: identifier,
-            dot: dot,
-            callFunction: callFunction
+        const Identifier = ctx.Identifier[0].image
+        const Point = ctx.Point[0].image
+        const Identifier1 = ctx.Identifier[1].image
+        const OpenParem = ctx.OpenParem[0].image
+        const jsxExpression = this.visit(ctx.jsxExpression)
+        const statement = this.visit(ctx.statement)
+
+        const CloseParem = ctx.CloseParem[0].image
+
+        if (typeof ctx.Comma != 'undefined') {
+            const Comma = ctx.Comma[0].image
+            const values = {
+                type: 'CALL_FCT_STM',
+                FunctionName: Identifier,
+                OpenParem: OpenParem,
+                value: '',
+                CloseParem: CloseParem
+            }
+            var element = ''
+            if (typeof ctx.Literal != 'undefined') {
+                for (let index = 0; index < ctx.Literal.length; index++) {
+                    const element1 = ctx.Literal[index]
+                    element += element1 + Comma
+                }
+            } else if (typeof ctx.StringLiteral != 'undefined') {
+                for (let index = 0; index < ctx.StringLiteral.length; index++) {
+                    const element1 = ctx.StringLiteral[index]
+                    element += element1 + Comma
+                }
+            } else if (typeof ctx.Identifier != 'undefined') {
+                for (let index = 0; index < ctx.Identifier.length; index++) {
+                    const element1 = ctx.Identifier[index]
+                    element += element1 + Comma
+                }
+            } else if (typeof jsxExpression != 'undefined') {
+                for (let index = 0; index < ctx.jsxExpression.length; index++) {
+                    const element1 = ctx.jsxExpression[index]
+                    element += element1 + Comma
+                }
+            }
+            values.value = element
+            return values
         }
+        const returnItem = {
+            type: 'CALL_FCT_ON_STM',
+            VariableName: Identifier,
+            Point: Point,
+            FunctionName: Identifier1,
+            OpenParem: OpenParem,
+            value: '',
+            CloseParem: CloseParem
+        }
+        if (typeof ctx.Literal != 'undefined') {
+            const Literal = ctx.Literal[0].image
+            returnItem.value = Literal
+        } else if (typeof ctx.StringLiteral != 'undefined') {
+            const Literal = ctx.StringLiteral[0].image
+            returnItem.value = Literal
+        } else if (typeof ctx.Identifier != 'undefined') {
+            const Identifier = ctx.Identifier[0].image
+            returnItem.value = Identifier
+        } else if (typeof jsxExpression != 'undefined') {
+            returnItem.value = jsxExpression
+        } else if (typeof statement != 'undefined') {
+            returnItem.value = statement
+        } else {
+            return {
+                type: 'CALL_FCT_ON_STM',
+                VariableName: Identifier,
+                Point: Point,
+                FunctionName: Identifier1,
+                OpenParem: OpenParem,
+                CloseParem: CloseParem
+            }
+        }
+        return returnItem
     }
 
     callFunction(ctx) {
-        const identifier = ctx.Identifier[0].image
-        const argumentList = this.visit(ctx.argumentList)
-        return {
-            type: 'CALLFUNCTION',
-            identifier: identifier,
-            argumentList: argumentList
-        }
-    }
+        const Identifier = ctx.Identifier[0].image
+        const OpenParem = ctx.OpenParem[0].image
+        const jsxExpression = this.visit(ctx.jsxExpression)
 
-    argumentList(ctx) {
-        const argumentList = []
-        for (var i = 0; i < ctx.expression.length; i++) {
-            const expression = this.visit(ctx.expression[i])
-            argumentList.push(expression)
+        const CloseParem = ctx.CloseParem[0].image
+        if (typeof ctx.Comma == 'undefined') {
+            const element = {
+                type: 'CALL_FCT_STM',
+                FunctionName: Identifier,
+                OpenParem: OpenParem,
+                value: '',
+                CloseParem: CloseParem
+            }
+            if (typeof ctx.Literal != 'undefined') {
+                const Literal = ctx.Literal[0].image
+                element.value = Literal
+            } else if (typeof ctx.StringLiteral != 'undefined') {
+                const StringLiteral = ctx.StringLiteral[0].image
+                element.value = StringLiteral
+            } else if (typeof ctx.Identifier != 'undefined') {
+                const Identifier = ctx.Identifier[0].image
+                element.value = Identifier
+            } else if (typeof jsxExpression != 'undefined') {
+                element.value = jsxExpression
+            } else {
+                return {
+                    type: 'CALL_FCT_STM',
+                    FunctionName: Identifier,
+                    OpenParem: OpenParem,
+                    CloseParem: CloseParem
+                }
+            }
+            return element
+        } else {
+            const Comma = ctx.Comma[0].image
+            const values = {
+                type: 'CALL_FCT_STM',
+                FunctionName: Identifier,
+                OpenParem: OpenParem,
+                value: '',
+                CloseParem: CloseParem
+            }
+            var element = ''
+            if (typeof ctx.Literal != 'undefined') {
+                for (let index = 0; index < ctx.Literal.length; index++) {
+                    const element1 = ctx.Literal[index]
+                    element += element1 + Comma
+                }
+            } else if (typeof ctx.StringLiteral != 'undefined') {
+                for (let index = 0; index < ctx.StringLiteral.length; index++) {
+                    const element1 = ctx.StringLiteral[index]
+                    element += element1 + Comma
+                }
+            } else if (typeof ctx.Identifier != 'undefined') {
+                for (let index = 0; index < ctx.Identifier.length; index++) {
+                    const element1 = ctx.Identifier[index]
+                    element += element1 + Comma
+                }
+            } else if (typeof jsxExpression != 'undefined') {
+                for (let index = 0; index < ctx.jsxExpression.length; index++) {
+                    const element1 = ctx.jsxExpression[index]
+                    element += element1 + Comma
+                }
+            }
+            values.value = element
+            return values
         }
-        return argumentList
-    }
-
-    expression(ctx) {
-        const expression = []
-        for (var i = 0; i < ctx.addition.length; i++) {
-            const addition = this.visit(ctx.addition[i])
-            expression.push(addition)
-        }
-        return expression
-    }
-
-    addition(ctx) {
-        const addition = []
-        for (var i = 0; i < ctx.multiplication.length; i++) {
-            const multiplication = this.visit(ctx.multiplication[i])
-            addition.push(multiplication)
-        }
-        return addition
-    }
-
-    multiplication(ctx) {
-        const multiplication = []
-        for (var i = 0; i < ctx.power.length; i++) {
-            const power = this.visit(ctx.power[i])
-            multiplication.push(power)
-        }
-        return multiplication
-    }
-
-    power(ctx) {
-        const power = []
-        for (var i = 0; i < ctx.unary.length; i++) {
-            const unary = this.visit(ctx.unary[i])
-            power.push(unary)
-        }
-        return power
-    }
-
-    unary(ctx) {
-        const unary = []
-        for (var i = 0; i < ctx.primary.length; i++) {
-            const primary = this.visit(ctx.primary[i])
-            unary.push(primary)
-        }
-        return unary
-    }
-
-    primary(ctx) {
-        const primary = []
-        for (var i = 0; i < ctx.primary.length; i++) {
-            const primary = this.visit(ctx.primary[i])
-            primary.push(primary)
-        }
-        return primary
     }
 }
 
 const vititorInstance = new DiyreactVisitor()
 
-export function parse(input) {
+export function visit(input) {
     const lexResult = diyreactLexer.tokenize(input)
     parserInstance.input = lexResult.tokens
     const cst = parserInstance.program()
