@@ -131,7 +131,16 @@ export function loader(source) {
 ```
 
 # Gebruiken in een project
+Om de compiler als loader te gebruiken binnen een project voeg je dit toe aan je `rules` in je `webpack.config.js`
 
-## Voorbeeld
-### Input
-### Output
+            {
+                test: /\.jsx$/,
+                use: [
+                    {loader: 'diyreact-parser'}
+                ]
+            }
+
+De `test` geeft aan dat het automatisch files parsed die op `.jsx` eindigen.
+
+## Opties
+### Test
