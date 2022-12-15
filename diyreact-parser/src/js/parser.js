@@ -1,114 +1,144 @@
 //Implementation of the parser
 // is a state machine that reads the tokens produced by the lexer and produces an AST
-import {diyreactVocabulary} from './lexer'
-
-const DiyeactLexer = require('./lexer')
+const Lexer = require('./lexer')
 const CstParser = require('chevrotain').CstParser
 
+const tokenVocabulary = Lexer.tokenVocabulary
 
-const VariableKey = diyreactVocabulary.VariableKey
-const Identifier = diyreactVocabulary.Identifier
-const EqualSign = diyreactVocabulary.EqualSign
-const From = diyreactVocabulary.From
-const OpenParem = diyreactVocabulary.OpenParem
-const Comma = diyreactVocabulary.Comma
-const Operator = diyreactVocabulary.Operator
-const Point = diyreactVocabulary.Point
-const CloseSimpleTag = diyreactVocabulary.CloseSimpleTag
-const CloseParem = diyreactVocabulary.CloseParem
-const LeftCurly = diyreactVocabulary.LeftCurly
-const Asteric = diyreactVocabulary.Asteric
-const As = diyreactVocabulary.As
-const Export = diyreactVocabulary.Export
-const Default = diyreactVocabulary.Default
-const RightCurly = diyreactVocabulary.RightCurly
-const OpeningForTag = diyreactVocabulary.OpeningForTag
-const OpeningForSecondTag = diyreactVocabulary.OpeningForSecondTag
-const CloseForTag = diyreactVocabulary.CloseForTag
-const Literal = diyreactVocabulary.Literal
-const StringLiteral = diyreactVocabulary.StringLiteral
-const MultiLineStringLiteral = diyreactVocabulary.MultiLineStringLiteral
-const Function = diyreactVocabulary.Function
-const Return = diyreactVocabulary.Return
-const Import = diyreactVocabulary.Import
+const OpenParenthesis = tokenVocabulary.OpenParenthesis
+const CloseParenthesis = tokenVocabulary.CloseParenthesis
+const OpenBracket = tokenVocabulary.OpenBracket
+const CloseBracket = tokenVocabulary.CloseBracket
+const Comma = tokenVocabulary.Comma
+const Point = tokenVocabulary.Point
+const EqualSign = tokenVocabulary.EqualSign
+const Asterisk = tokenVocabulary.Asterisk
+const As = tokenVocabulary.As
+const Operator = tokenVocabulary.Operator
+const Not = tokenVocabulary.Not
+const Default = tokenVocabulary.Default
+const New = tokenVocabulary.New
+const VarDeclaration = tokenVocabulary.VarDeclaration
+const Return = tokenVocabulary.Return
+const Function = tokenVocabulary.Function
+const From = tokenVocabulary.From
+const Export = tokenVocabulary.Export
+const Import = tokenVocabulary.Import
+const Require = tokenVocabulary.Require
+const Identifier = tokenVocabulary.Identifier
+const Literal = tokenVocabulary.Literal
+const StringLiteral = tokenVocabulary.StringLiteral
+const MultiLineStringLiteral = tokenVocabulary.MultiLineStringLiteral
+const OpenAngleBracket = tokenVocabulary.OpenAngleBracket
+const CloseAngleBracket = tokenVocabulary.CloseAngleBracket
+const OpenEndAngleBracket = tokenVocabulary.OpenEndAngleBracket
+
 
 //The parser definition
 class DiyreactParser extends CstParser {
 
     constructor() {
-        super(diyreactVocabulary, {recoveryEnabled: true, outputCst: true})
+        super(tokenVocabulary, {recoveryEnabled: true, outputCst: true})
         const $ = this
 
-
+        //this is the top level rule
+        //program form : (statement)*
         $.RULE('program', () => {
             $.MANY(() => {
                 $.SUBRULE($.statement)
             })
         })
 
+        //statement form : (importStatement | exportStatement | functionDeclaration | varDeclaration | returnStatement | expressionStatement)
         $.RULE('statement', () => {
             $.OR([
-                { ALT: () => $.SUBRULE($.importStatement) },
-                { ALT: () => $.SUBRULE($.exportStatement) },
-                { ALT: () => $.SUBRULE($.functionDeclaration) },
-                { ALT: () => $.SUBRULE($.variableDeclaration) },
-                { ALT: () => $.SUBRULE($.returnStatement) },
-                { ALT: () => $.SUBRULE($.callFunctionOn) },
-                { ALT: () => $.SUBRULE($.callFunction) }
+                {ALT: () => $.SUBRULE($.importStatement)},
+                {ALT: () => $.SUBRULE($.exportStatement)},
+                {ALT: () => $.SUBRULE($.functionDeclaration)},
+                {ALT: () => $.SUBRULE($.variableDeclaration)},
+                {ALT: () => $.SUBRULE($.returnStatement)},
+                {ALT: () => $.SUBRULE($.callFunctionOn)},
+                {ALT: () => $.SUBRULE($.callFunction)}
             ])
         })
 
+        //importStatement form : import (* | curlyImport | identifier) from (StringLiteral)
         $.RULE('importStatement', () => {
             $.CONSUME(Import)
             $.OPTION(() => {
                 $.OR([
-                    { ALT: () => $.SUBRULE($.astericImport) },
-                    { ALT: () => $.SUBRULE($.curlyImport) },
-                    { ALT: () => $.CONSUME(Identifier) }
+                    {ALT: () => $.SUBRULE($.AsteriskImport)},
+                    {ALT: () => $.SUBRULE($.curlyImport)},
+                    {ALT: () => $.CONSUME(Identifier)}
                 ])
                 $.CONSUME(From)
             })
             $.CONSUME(StringLiteral)
         })
 
-        $.RULE('astericImport', () => {
-            $.CONSUME(this.Asteric)
+        //asteriskImport form : * as identifier
+        $.RULE('AsteriskImport', () => {
+            $.CONSUME(Asterisk)
             $.CONSUME(As)
             $.CONSUME(Identifier)
         })
 
+        //curlyImport form : {identifier (, identifier)*}
         $.RULE('curlyImport', () => {
-            $.CONSUME(LeftCurly)
-            $.CONSUME(Identifier)
-            $.CONSUME(RightCurly)
+            $.CONSUME(OpenBracket)
+            $.MANY_SEP({
+                SEP: Comma,
+                DEF: () => {
+                    $.CONSUME(Identifier)
+                }
+            })
+            $.CONSUME(CloseBracket)
         })
 
+        //exportStatement form : export (default) (functionDeclaration | variableDeclaration)
         $.RULE('exportStatement', () => {
             $.CONSUME(Export)
             $.OPTION(() => {
                 $.CONSUME(Default)
             })
             $.OR([
-                { ALT: () => $.SUBRULE($.variableDeclaration) },
-                { ALT: () => $.SUBRULE($.functionDeclaration) }
+                {ALT: () => $.SUBRULE($.variableDeclaration)},
+                {ALT: () => $.SUBRULE($.functionDeclaration)}
             ])
         })
 
+        //variableDeclaration form : var identifier = (literals | jsxExpression | operation | statement)
+        $.RULE('variableDeclaration', () => {
+            $.CONSUME(VarDeclaration)
+            $.CONSUME(Identifier)
+            $.OPTION(() => {
+                $.CONSUME(EqualSign)
+                $.OR([
+                    {ALT: () => $.SUBRULE($.literals)},
+                    {ALT: () => $.SUBRULE($.jsxExpression)},
+                    {ALT: () => $.SUBRULE($.operation)},
+                    {ALT: () => $.SUBRULE($.statement)}
+                ])
+            })
+        })
+
+        //functionDeclaration form : function identifier (functionVariables) {statement}
         $.RULE('functionDeclaration', () => {
             $.CONSUME(Function)
             $.CONSUME(Identifier)
-            $.CONSUME(OpenParem)
+            $.CONSUME(OpenParenthesis)
             $.OPTION(() => {
                 $.SUBRULE($.functionVariables)
             })
-            $.CONSUME(CloseParem)
-            $.CONSUME(LeftCurly)
+            $.CONSUME(CloseParenthesis)
+            $.CONSUME(OpenBracket)
             $.OPTION1(() => {
                 $.SUBRULE($.statement)
             })
-            $.CONSUME(RightCurly)
+            $.CONSUME(CloseBracket)
         })
 
+        //functionVariables form : identifier (, identifier)*
         $.RULE('functionVariables', () => {
             $.MANY_SEP({
                 SEP: Comma,
@@ -118,65 +148,46 @@ class DiyreactParser extends CstParser {
             })
         })
 
-        $.RULE('variableDeclaration', () => {
-            $.CONSUME(VariableKey)
-            $.CONSUME(Identifier)
-            $.OPTION(() => {
-                $.CONSUME(EqualSign)
-                $.OR([
-                    { ALT: () => $.SUBRULE($.literals) },
-                    { ALT: () => $.SUBRULE($.jsxExpression) },
-                    { ALT: () => $.SUBRULE($.operation) },
-                    { ALT: () => $.SUBRULE($.statement) }
-                ])
-            })
-        })
-
+        //literals form : (StringLiteral | MultiLineStringLiteral | Literal)
         $.RULE('literals', () => {
             $.OR([
-                { ALT: () => $.CONSUME(Literal) },
-                { ALT: () => $.CONSUME(StringLiteral) },
-                { ALT: () => $.CONSUME(MultiLineStringLiteral) }
+                {ALT: () => $.CONSUME(Literal)},
+                {ALT: () => $.CONSUME(StringLiteral)},
+                {ALT: () => $.CONSUME(MultiLineStringLiteral)}
             ])
         })
 
+        //expression form : (jsxExpression | operation)
         $.RULE('expression', () => {
             $.OR([
-                { ALT: () => $.SUBRULE($.operation) },
-                { ALT: () => $.SUBRULE($.jsxExpression) }
+                {ALT: () => $.SUBRULE($.operation)},
+                {ALT: () => $.SUBRULE($.jsxExpression)}
             ])
         })
 
+        //operation form : (identifier) + (operator (literals | identifier))
         $.RULE('operation', () => {
             $.CONSUME(Identifier)
             $.CONSUME(Operator)
             $.OR([
-                { ALT: () => $.CONSUME1(Identifier) },
-                { ALT: () => $.CONSUME1(Literal) }
+                {ALT: () => $.CONSUME1(Identifier)},
+                {ALT: () => $.CONSUME1(Literal)}
             ])
         })
 
+        //jsxExpression form : <identifier> (jsxExpression | literals)* </identifier>
         $.RULE('jsxExpression', () => {
-            $.CONSUME(OpeningForTag)
+            $.CONSUME(OpenAngleBracket)
             $.CONSUME(Identifier)
+            $.CONSUME(CloseAngleBracket)
             $.OPTION(() => {
                 $.MANY(() => {
-                    $.CONSUME1(Identifier)
-                    $.CONSUME(EqualSign)
-                    $.CONSUME(StringLiteral)
-                })
-            })
-            $.OR([
-                { ALT: () => $.CONSUME(CloseSimpleTag) },
-                { ALT: () => $.SUBRULE($.fullTag) }
-            ])
-        })
-
-        $.RULE('fullTag', () => {
-            $.CONSUME(CloseForTag)
-            $.OPTION(() => {
-                $.MANY(() => {
-                    $.SUBRULE($.jsxAllowedSymbols)
+                    $.OR([
+                        {ALT: () => $.CONSUME(Identifier)},
+                        {ALT: () => $.CONSUME(Comma)},
+                        {ALT: () => $.CONSUME(Point)},
+                        {ALT: () => $.CONSUME(Operator)}
+                    ])
                 })
             })
             $.OPTION1(() => {
@@ -184,71 +195,45 @@ class DiyreactParser extends CstParser {
                     $.SUBRULE($.jsxExpression)
                 })
             })
-            $.CONSUME(OpeningForSecondTag)
+            $.CONSUME(OpenEndAngleBracket)
             $.CONSUME(Identifier)
-            $.CONSUME1(CloseForTag)
+            $.CONSUME1(CloseAngleBracket)
         })
 
-        $.RULE('jsxAllowedSymbols', () => {
-            $.OR([
-                { ALT: () => $.CONSUME(Identifier) },
-                { ALT: () => $.CONSUME(Comma) },
-                { ALT: () => $.CONSUME(Point) },
-                { ALT: () => $.CONSUME(Operator) }
-            ])
-        })
-
+        //returnStatement form : return (literals | jsxExpression | operation | statement)
         $.RULE('returnStatement', () => {
             $.CONSUME(Return)
             $.OR([
-                { ALT: () => $.SUBRULE($.expression) },
-                { ALT: () => $.SUBRULE($.callFunctionOn) },
-                { ALT: () => $.SUBRULE($.callFunction) },
-                { ALT: () => $.CONSUME(Identifier) }
+                {ALT: () => $.SUBRULE($.expression)},
+                {ALT: () => $.SUBRULE($.callFunction)},
+                {ALT: () => $.CONSUME(Identifier)}
             ])
         })
 
-        $.RULE('callFunctionOn', () => {
-            $.CONSUME(Identifier)
-            $.CONSUME(Point)
-            $.CONSUME1(Identifier)
-            $.CONSUME(OpenParem)
-            $.OPTION(() => {
-                $.MANY_SEP({
-                    SEP: Comma,
-                    DEF: () => {
-                        $.OR([
-                            { ALT: () => $.CONSUME(Literal) },
-                            { ALT: () => $.CONSUME(StringLiteral) },
-                            { ALT: () => $.SUBRULE($.jsxExpression) },
-                            { ALT: () => $.SUBRULE($.statement) },
-                            { ALT: () => $.CONSUME2(Identifier) }
-                        ])
-                    }
-                })
-            })
-            $.CONSUME(CloseParem)
-        })
-
+        //callFunction form : identifier.(identifier) (, (literals | jsxExpression | operation | statement))*)
         $.RULE('callFunction', () => {
-            $.CONSUME(Identifier)
-            $.CONSUME(OpenParem)
+            $.OPTION(() => {
+                $.CONSUME(Identifier)
+                $.CONSUME(Point)
+            })
+            $.CONSUME1(Identifier)
+            $.CONSUME(OpenParenthesis)
             $.OPTION(() => {
                 $.MANY_SEP({
                     SEP: Comma,
                     DEF: () => {
                         $.OR([
-                            { ALT: () => $.CONSUME(Literal) },
-                            { ALT: () => $.CONSUME(StringLiteral) },
-                            { ALT: () => $.CONSUME1(Identifier) },
-                            { ALT: () => $.SUBRULE($.jsxExpression) }
+                            {ALT: () => $.CONSUME(Literal)},
+                            {ALT: () => $.CONSUME(StringLiteral)},
+                            {ALT: () => $.SUBRULE($.jsxExpression)},
+                            {ALT: () => $.SUBRULE($.statement)},
+                            {ALT: () => $.CONSUME2(Identifier)}
                         ])
                     }
                 })
             })
-            $.CONSUME(CloseParem)
+            $.CONSUME(CloseParenthesis)
         })
-
         // very important to call this after all the rules have been defined.
         // otherwise the parser may not work correctly as it will lack information
         // derived during the self-analysis phase.
@@ -260,7 +245,7 @@ export const parserInstance = new DiyreactParser()
 export const Parser = DiyreactParser
 
 export function parse(inputText) {
-    const lexResult = DiyeactLexer.tokenize(inputText)
+    const lexResult = Lexer.tokenize(inputText)
     parserInstance.input = lexResult.tokens
     if (parserInstance.errors.length > 0) {
         throw Error('sad sad panda, lexing errors detected')
