@@ -70,7 +70,7 @@ function loaderFunction(source, functionStatement) {
             element.returnValue.expression.type === 'JSX'
         ) {
             const jsxTag = element.returnValue.expression
-            returnString += `return Glacier.createElement('${jsxTag.FirstTag}',`
+            returnString += `return Diyreact.createElement('${jsxTag.FirstTag}',`
             if (typeof jsxTag.attributes != 'undefined') {
                 returnString += `'${jsxTag.attributes}',`
             } else {
@@ -107,7 +107,7 @@ function loaderFunction(source, functionStatement) {
 
 function loaderVariable(variableStatement) {
     const element = variableStatement.Value
-    let returnString = `${variableStatement.VariableType} ${variableStatement.Identifier} = Glacier.createElement('${element.FirstTag}',`
+    let returnString = `${variableStatement.VariableType} ${variableStatement.Identifier} = Diyreact.createElement('${element.FirstTag}',`
     if (typeof element.attributes != 'undefined') {
         returnString += `'${element.attributes}',`
     } else {
@@ -140,7 +140,7 @@ function loaderCreateElement(jsxExpression) {
     let returnString = ''
     for (let index = 0; index < jsxExpression.length; index++) {
         const element = jsxExpression[index]
-        returnString += `Glacier.createElement('${element.FirstTag}',`
+        returnString += `Diyreact.createElement('${element.FirstTag}',`
         if (typeof element.attributes != 'undefined') {
             returnString += `'${element.attributes}',`
         } else {

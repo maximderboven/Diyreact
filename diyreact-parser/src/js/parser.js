@@ -180,16 +180,16 @@ class DiyreactParser extends CstParser {
             $.CONSUME(OpenAngleBracket)
             $.CONSUME(Identifier)
             $.CONSUME(CloseAngleBracket)
-            $.OPTION(() => {
-                $.MANY(() => {
-                    $.OR([
-                        {ALT: () => $.CONSUME(Identifier)},
-                        {ALT: () => $.CONSUME(Comma)},
-                        {ALT: () => $.CONSUME(Point)},
-                        {ALT: () => $.CONSUME(Operator)}
-                    ])
-                })
-            })
+            // $.OPTION(() => {
+            //     $.MANY(() => {
+            //         $.OR([
+            //             {ALT: () => $.CONSUME(Identifier)},
+            //             {ALT: () => $.CONSUME(Comma)},
+            //             {ALT: () => $.CONSUME(Point)},
+            //             {ALT: () => $.CONSUME(Operator)}
+            //         ])
+            //     })
+            // })
             $.OPTION1(() => {
                 $.MANY1(() => {
                     $.SUBRULE($.jsxExpression)
