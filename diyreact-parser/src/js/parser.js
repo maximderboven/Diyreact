@@ -57,7 +57,6 @@ class DiyreactParser extends CstParser {
                 {ALT: () => $.SUBRULE($.functionDeclaration)},
                 {ALT: () => $.SUBRULE($.variableDeclaration)},
                 {ALT: () => $.SUBRULE($.returnStatement)},
-                {ALT: () => $.SUBRULE($.callFunctionOn)},
                 {ALT: () => $.SUBRULE($.callFunction)}
             ])
         })
@@ -128,7 +127,12 @@ class DiyreactParser extends CstParser {
             $.CONSUME(Identifier)
             $.CONSUME(OpenParenthesis)
             $.OPTION(() => {
-                $.SUBRULE($.functionVariables)
+                $.MANY_SEP({
+                    SEP: Comma,
+                    DEF: () => {
+                        $.CONSUME(Identifier)
+                    }
+                })
             })
             $.CONSUME(CloseParenthesis)
             $.CONSUME(OpenBracket)
@@ -138,30 +142,12 @@ class DiyreactParser extends CstParser {
             $.CONSUME(CloseBracket)
         })
 
-        //functionVariables form : identifier (, identifier)*
-        $.RULE('functionVariables', () => {
-            $.MANY_SEP({
-                SEP: Comma,
-                DEF: () => {
-                    $.CONSUME(Identifier)
-                }
-            })
-        })
-
         //literals form : (StringLiteral | MultiLineStringLiteral | Literal)
         $.RULE('literals', () => {
             $.OR([
                 {ALT: () => $.CONSUME(Literal)},
                 {ALT: () => $.CONSUME(StringLiteral)},
                 {ALT: () => $.CONSUME(MultiLineStringLiteral)}
-            ])
-        })
-
-        //expression form : (jsxExpression | operation)
-        $.RULE('expression', () => {
-            $.OR([
-                {ALT: () => $.SUBRULE($.operation)},
-                {ALT: () => $.SUBRULE($.jsxExpression)}
             ])
         })
 
@@ -207,6 +193,14 @@ class DiyreactParser extends CstParser {
                 {ALT: () => $.SUBRULE($.expression)},
                 {ALT: () => $.SUBRULE($.callFunction)},
                 {ALT: () => $.CONSUME(Identifier)}
+            ])
+        })
+
+        //expression form : (jsxExpression | operation)
+        $.RULE('expression', () => {
+            $.OR([
+                {ALT: () => $.SUBRULE($.operation)},
+                {ALT: () => $.SUBRULE($.jsxExpression)}
             ])
         })
 
