@@ -38,7 +38,6 @@ const As = createToken({name: 'As', pattern: /as/})
 const Identifier = createToken({name: 'Identifier', pattern: /[a-zA-Z][a-zA-Z0-9]*/})
 const Literal = createToken({name: 'Literal', pattern: /null|true|false|\d+(\.[0-9]+)?/})
 const StringLiteral = createToken({name: 'StringLiteral', pattern: /'.*'|".*"/})
-const MultiLineStringLiteral = createToken({name: 'MultiLineStringLiteral', pattern: /`[^`]*`/, line_breaks: true})
 const WhiteSpace = createToken({name: 'WhiteSpace', pattern: /\s+/, group: chevrotain.Lexer.SKIPPED})
 
 //jsxtags
@@ -83,11 +82,10 @@ const allTokens = [
     Identifier,
     Literal,
     StringLiteral,
-    MultiLineStringLiteral,
     WhiteSpace,
+    OpenEndAngleBracket,
     OpenAngleBracket,
-    CloseAngleBracket,
-    OpenEndAngleBracket
+    CloseAngleBracket
 ]
 
 const DiyreactLexerInstance = new DiyreactLexer(allTokens, {positionTracking: 'onlyStart'})

@@ -1,46 +1,55 @@
 import {visit} from './visitor'
-
+const P = require('./parser')
 
 let sourcePosition = 0
 
 export function loader(source) {
-    const astFromVisitor = visit(source)
+    const ast = visit(source)
+    const cst = P.parse(source)
+    console.log(cst)
     let returnString = ''
     sourcePosition = 0
 
-    if (astFromVisitor.program) {
+
+    //first item should always be type 'PROGRAM'
+    if (ast.program) {
+        console.log('Oorspronkelijke input:',source)
+        console.log('AST:',ast)
+        //split op nieuwe lijn om elke lijn apart te benaderen
         const splitSource = source.split(/\n/)
-        const splitSource2 = []
+        const output = []
+        //loop through all statements
         for (let index = 0; index < splitSource.length; index++) {
             const element = splitSource[index]
+            //check if the statement is empty or a comment (wat normaal niet kan want dat wordt geskipt in de lexer)
             if (element !== '' && !element.includes('//') && !element.includes('/*')) {
                 if (!element.match('<(.*)>.*?|<(.*) />') && !element.match(/^\s*$/))
-                    splitSource2.push(element)
+                    output.push(element)
             }
         }
 
-        for (let index = 0; index < astFromVisitor.program.length; index++) {
-            const element = astFromVisitor.program[index].statement
-            if (typeof element.Value != 'undefined' && element.Value.type === 'JSX') {
+        for (let index = 0; index < ast.program.length; index++) {
+            const element = ast.program[index].statement
+            if (typeof element.Value != 'undefined' && element.Value.type === 'JSXEXPRESSION') {
                 returnString += loaderVariable(element)
-            } else if (element.type === 'EXPORT') {
-                if (element.exports.type === 'FCT_STM') {
+            } else if (element.type === 'EXPORTSTATEMENT') {
+                if (element.exports.type === 'FUNCTIONDECLARATION') {
                     returnString += 'export '
                     if (typeof element.Default != 'undefined') {
                         returnString += 'default '
                     }
-                    returnString += loaderFunction(splitSource2, element.exports)
-                } else if (element.exports.type === 'VAR_STM') {
+                    returnString += loaderFunction(output, element.exports)
+                } else if (element.exports.type === 'VARIABLEDECLARATION') {
                     returnString += 'export '
                     if (typeof element.Default != 'undefined') {
                         returnString += 'default '
                     }
                     returnString += loaderVariable(element.exports)
                 }
-            } else if (element.type === 'FCT_STM') {
-                returnString += loaderFunction(splitSource2, element)
+            } else if (element.type === 'CALLFUNCTION') {
+                returnString += loaderFunction(output, element)
             } else {
-                returnString += splitSource2[sourcePosition] + '\n'
+                returnString += output[sourcePosition] + '\n'
                 sourcePosition++
             }
         }
@@ -65,9 +74,9 @@ function loaderFunction(source, functionStatement) {
     for (let index = 0; index < functionStatement.statement.length; index++) {
         const element = functionStatement.statement[index].statement
         if (
-            element.type === 'RETURN_STM' &&
-            element.returnValue.type === 'EXPR' &&
-            element.returnValue.expression.type === 'JSX'
+            element.type === 'RETURN' &&
+            element.returnValue.type === 'EXPRESSION' &&
+            element.returnValue.expression.type === 'JSXEXPRESSION'
         ) {
             const jsxTag = element.returnValue.expression
             returnString += `return Diyreact.createElement('${jsxTag.FirstTag}',`

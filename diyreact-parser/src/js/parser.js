@@ -28,7 +28,6 @@ const Require = tokenVocabulary.Require
 const Identifier = tokenVocabulary.Identifier
 const Literal = tokenVocabulary.Literal
 const StringLiteral = tokenVocabulary.StringLiteral
-const MultiLineStringLiteral = tokenVocabulary.MultiLineStringLiteral
 const OpenAngleBracket = tokenVocabulary.OpenAngleBracket
 const CloseAngleBracket = tokenVocabulary.CloseAngleBracket
 const OpenEndAngleBracket = tokenVocabulary.OpenEndAngleBracket
@@ -130,7 +129,7 @@ class DiyreactParser extends CstParser {
                 $.MANY_SEP({
                     SEP: Comma,
                     DEF: () => {
-                        $.CONSUME(Identifier)
+                        $.CONSUME2(Identifier)
                     }
                 })
             })
@@ -146,8 +145,7 @@ class DiyreactParser extends CstParser {
         $.RULE('literals', () => {
             $.OR([
                 {ALT: () => $.CONSUME(Literal)},
-                {ALT: () => $.CONSUME(StringLiteral)},
-                {ALT: () => $.CONSUME(MultiLineStringLiteral)}
+                {ALT: () => $.CONSUME(StringLiteral)}
             ])
         })
 
@@ -182,7 +180,7 @@ class DiyreactParser extends CstParser {
                 })
             })
             $.CONSUME(OpenEndAngleBracket)
-            $.CONSUME(Identifier)
+            $.CONSUME1(Identifier)
             $.CONSUME1(CloseAngleBracket)
         })
 
@@ -212,7 +210,7 @@ class DiyreactParser extends CstParser {
             })
             $.CONSUME1(Identifier)
             $.CONSUME(OpenParenthesis)
-            $.OPTION(() => {
+            $.OPTION2(() => {
                 $.MANY_SEP({
                     SEP: Comma,
                     DEF: () => {

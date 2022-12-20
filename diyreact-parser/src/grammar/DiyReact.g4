@@ -58,8 +58,13 @@ fragment WS: [ \t\r\n]+ -> skip ;
 //import React from 'react';
 //import { Component } from 'react';
 //import * as DiyReact from 'react';
-//
-//export default function App() {
-//  return <div>hello world</div>;
+
+//function optellen(getal, getal2) {
+//  return getal + getal2;
 //}
+//const optelling = optellen(1, 2);
+//console.log(optelling)
+//
+//const element = <div>hello world</div> <strong>foo</strong>
+//DiyReact.render(element, document.getElementById('root'));
 
