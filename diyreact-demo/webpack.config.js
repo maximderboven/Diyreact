@@ -3,15 +3,16 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const path = require('path')
 
 module.exports = {
-    entry: './src/js/index.js',
+    entry: './src/index.jsx',
     output: {
         filename: 'bundle.js',
-        path: path.resolve(__dirname, 'dist')
+        path: path.resolve(__dirname, 'dist/'),
+        publicPath: '/dist/'
     },
     mode: 'development',
     devtool: 'source-map',
     resolve: {
-        extensions: ['.js']
+        extensions: ['.jsx', '.js']
     },
     module: {
         rules: [
@@ -26,20 +27,10 @@ module.exports = {
             },
             {
                 test: /\.jsx$/,
-                use: [
-                    {loader: 'diyreact-loader'}
-                ]
+                loader: path.resolve('../diyreact-loader/src/index.js')
             }
         ]
     },
-    plugins: [
-        new MiniCssExtractPlugin({
-            filename: 'bundle.css'
-        }),
-        new HtmlWebpackPlugin({
-            template: 'src/html/index.html'
-        })
-    ],
     devServer: {
         open: true,
         port: 9000
