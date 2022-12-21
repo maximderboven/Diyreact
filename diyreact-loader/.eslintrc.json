@@ -1,0 +1,28 @@
+{
+    "env": {
+        "browser": false,
+        "es6": true,
+        "jest": true,
+        "node": true
+    },
+    "parserOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+    },
+    "plugins": ["jest"],
+    "root": true,
+    "extends": [
+        "plugin:import/errors",
+        "plugin:import/warnings"
+    ],
+    "rules": {
+        "comma-dangle": [ "error", "never" ],
+        "indent": [ "error", 4, { "SwitchCase": 1 } ],
+        "linebreak-style": [ "error", "unix" ],
+        "no-console": "off",
+        "no-trailing-spaces": "error",
+        "no-undef": "error",
+        "quotes": [ "error", "single" ],
+        "semi": [ "error", "never" ]
+    }
+}

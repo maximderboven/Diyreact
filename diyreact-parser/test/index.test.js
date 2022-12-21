@@ -7,7 +7,15 @@ const V = require('../src/js/visitor')
 
 test('test', () => {
     const input = `
-const optelling = optellen(1,2)`
+    import {Diyreact} from 'diyreact-parser'
+
+function optellen(getal, getal2) {
+    return getal + getal2
+}
+
+const optelling = optellen(1, 2)
+console.log(optelling)
+const element = '<div>hello world</div> <strong>foo</strong>'`
     const cst = P.parse(input)
     const v = V.visit(input)
     console.log(JSON.stringify(v))
