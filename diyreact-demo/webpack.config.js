@@ -27,7 +27,7 @@ module.exports = {
             {
                 test: /\.jsx$/,
                 use: [
-                    {loader: 'diyreact-parser'}
+                    {loader: 'diyreact-loader'}
                 ]
             }
         ]

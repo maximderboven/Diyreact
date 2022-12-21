@@ -408,6 +408,7 @@ class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
             const Point = ctx.Point[0].image
             const Identifier1 = ctx.Identifier[1].image
             const OpenParenthesis = ctx.OpenParenthesis[0].image
+
             const jsxExpression = this.visit(ctx.jsxExpression)
             const statement = this.visit(ctx.statement)
 
@@ -482,7 +483,7 @@ class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
             const OpenParenthesis = ctx.OpenParenthesis[0].image
             const jsxExpression = this.visit(ctx.jsxExpression)
             const CloseParenthesis = ctx.CloseParenthesis[0].image
-            if (ctx.Comma) {
+            if (!ctx.Comma) {
                 const element = {
                     type: 'CALLFUNCTION',
                     FunctionName: Identifier,
@@ -519,17 +520,17 @@ class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
                 element = ''
                 if (ctx.Literal) {
                     for (let index = 0; index < ctx.Literal.length; index++) {
-                        const element1 = ctx.Literal[index]
+                        const element1 = ctx.Literal[index].image
                         element += element1 + Comma
                     }
                 } else if (ctx.StringLiteral) {
                     for (let index = 0; index < ctx.StringLiteral.length; index++) {
-                        const element1 = ctx.StringLiteral[index]
+                        const element1 = ctx.StringLiteral[index].image
                         element += element1 + Comma
                     }
                 } else if (ctx.Identifier) {
                     for (let index = 0; index < ctx.Identifier.length; index++) {
-                        const element1 = ctx.Identifier[index]
+                        const element1 = ctx.Identifier[index].image
                         element += element1 + Comma
                     }
                 } else if (jsxExpression) {

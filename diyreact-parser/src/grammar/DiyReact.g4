@@ -54,17 +54,4 @@ UNDEFINED_LITERAL: 'undefined';
 OPERATOR: '+' | '-' | '*' | '/' | '%';
 fragment WS: [ \t\r\n]+ -> skip ;
 
-//with all the above rules, we can parse the following code
-//import React from 'react';
-//import { Component } from 'react';
-//import * as DiyReact from 'react';
-
-//function optellen(getal, getal2) {
-//  return getal + getal2;
-//}
-//const optelling = optellen(1, 2);
-//console.log(optelling)
-//
-//const element = <div>hello world</div> <strong>foo</strong>
-//DiyReact.render(element, document.getElementById('root'));
 

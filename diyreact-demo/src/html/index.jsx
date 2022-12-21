@@ -19,3 +19,4 @@ console.log(optelling)
 const element = '<div>hello world</div> <strong>foo</strong>'
 
 Diyreact.render(element, document.getElementById('root'))
+
