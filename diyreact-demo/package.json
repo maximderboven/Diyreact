@@ -23,6 +23,7 @@
     "scripts": {
         "build": "webpack",
         "start": "webpack serve",
-        "test": "NODE_OPTIONS=--experimental-vm-modules jest"
+        "test": "NODE_OPTIONS=--experimental-vm-modules jest",
+        "install": "npm i && npm run build"
     }
 }
