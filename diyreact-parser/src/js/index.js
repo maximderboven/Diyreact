@@ -1,6 +1,7 @@
 const Le = require('./lexer')
 const P = require('./parser')
 const V = require('./visitor')
+const C = require('./compiler')
 
 module.exports = {
     tokenize: function(input) {
@@ -11,6 +12,8 @@ module.exports = {
     },
     ast: function(input) {
         return V.visit(input)
+    },
+    compile: function(input) {
+        return C.compile(input)
     }
 }
-

@@ -4,19 +4,13 @@
 const Le = require('../src/js/lexer')
 const P = require('../src/js/parser')
 const V = require('../src/js/visitor')
+const C = require('../src/js/compiler')
 
 test('test', () => {
     const input = `
-    import {Diyreact} from 'diyreact-parser'
-
-function optellen(getal, getal2) {
-    return getal + getal2
-}
-
-const optelling = optellen(1, 2)
+const optelling = optellen(getal, 2)
 console.log(optelling)
-const element = '<div>hello world</div> <strong>foo</strong>'`
-    const cst = P.parse(input)
-    const v = V.visit(input)
-    console.log(JSON.stringify(v))
+console.log(naam)`
+    const c = C.compile(input)
+    console.log(c)
 })

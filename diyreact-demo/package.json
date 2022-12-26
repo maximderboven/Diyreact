@@ -5,7 +5,7 @@
     "author": "Lars Willemsens",
     "license": "MIT",
     "devDependencies": {
-        "diyreact-parser": "file:../diyreact-parser",
+        "diyreact": "file:../diyreact-loader",
         "@babel/preset-env": "^7.19.1",
         "css-loader": "^6.7.1",
         "eslint": "^8.24.0",
@@ -23,7 +23,6 @@
     "scripts": {
         "build": "webpack",
         "start": "webpack serve",
-        "test": "NODE_OPTIONS=--experimental-vm-modules jest",
-        "install": "npm i && npm run build"
+        "test": "NODE_OPTIONS=--experimental-vm-modules jest"
     }
 }
