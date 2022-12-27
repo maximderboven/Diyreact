@@ -101,7 +101,32 @@ export function compile(input) {
     }
 
     function loadJSX(element) {
-        returnString += `${element.JSXElement} DIKKE ZEB`
+        returnString += `document.createElement("${element.Identifier}")`
+
+        if (element.jsxContent) {
+            returnString += `.appendChild(document.createTextNode("`
+            //jsxContent can be a string or an array of strings
+            if (typeof element.jsxContent === 'string') {
+                returnString += `${element.jsxContent} `
+            }
+            if (Array.isArray(element.jsxContent)) {
+                for (let index = 0; index < element.jsxContent.length; index++) {
+                    returnString += `${element.jsxContent[index].Identifier} `
+                }
+            }
+            returnString += `"))`
+        }
+        if (element.jsxExpression) {
+            returnString += `.appendChild(`
+            //jsxExpression can be an object or an array of objects
+            if (Array.isArray(element.jsxExpression)) {
+                for (let index = 0; index < element.jsxExpression.length; index++) {
+                    loadJSX(element.jsxExpression[index])
+                }
+            }
+            returnString += `)`
+        }
+        returnString += ')'
     }
 
     function loadOperation(element) {

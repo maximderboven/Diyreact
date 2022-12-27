@@ -312,16 +312,60 @@ class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
         const Identifier = ctx.Identifier[0].image
         const CloseAngleBracket = ctx.CloseAngleBracket[0].image
         const jsxExpression = this.visit(ctx.jsxExpression)
-        const OpenEndAngleBracket = ctx.OpenEndAngleBracket[1].image
+        const content = this.visit(ctx.jsxContent)
+        const OpenEndAngleBracket = ctx.OpenEndAngleBracket[0].image
         const Identifier1 = ctx.Identifier[1].image
         const CloseAngleBracket1 = ctx.CloseAngleBracket[1].image
-        if (jsxExpression) {
+        if (jsxExpression && content) {
+            let expressions = []
+            for (let index = 0; index < ctx.jsxExpression.length; index++) {
+                const element = this.visit(ctx.jsxExpression[index])
+                expressions.push(element)
+            }
+            let contents = []
+            for (let index = 0; index < ctx.jsxContent.length; index++) {
+                const element = this.visit(ctx.jsxContent[index])
+                contents.push(element)
+            }
             return {
                 type: 'JSXEXPRESSION',
                 OpenAngleBracket: OpenAngleBracket,
                 Identifier: Identifier,
                 CloseAngleBracket: CloseAngleBracket,
-                jsxExpression: jsxExpression,
+                jsxExpression: expressions,
+                jsxContent: contents,
+                OpenEndAngleBracket: OpenEndAngleBracket,
+                Identifier1: Identifier1,
+                CloseAngleBracket1: CloseAngleBracket1
+            }
+        } else if (jsxExpression) {
+            let expressions = []
+            for (let index = 0; index < ctx.jsxExpression.length; index++) {
+                const element = this.visit(ctx.jsxExpression[index])
+                expressions.push(element)
+            }
+            return {
+                type: 'JSXEXPRESSION',
+                OpenAngleBracket: OpenAngleBracket,
+                Identifier: Identifier,
+                CloseAngleBracket: CloseAngleBracket,
+                jsxExpression: expressions,
+                OpenEndAngleBracket: OpenEndAngleBracket,
+                Identifier1: Identifier1,
+                CloseAngleBracket1: CloseAngleBracket1
+            }
+        } else if (content) {
+            let contents = []
+            for (let index = 0; index < ctx.jsxContent.length; index++) {
+                const element = this.visit(ctx.jsxContent[index])
+                contents.push(element)
+            }
+            return {
+                type: 'JSXEXPRESSION',
+                OpenAngleBracket: OpenAngleBracket,
+                Identifier: Identifier,
+                CloseAngleBracket: CloseAngleBracket,
+                jsxContent: contents,
                 OpenEndAngleBracket: OpenEndAngleBracket,
                 Identifier1: Identifier1,
                 CloseAngleBracket1: CloseAngleBracket1
@@ -335,6 +379,40 @@ class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
                 OpenEndAngleBracket: OpenEndAngleBracket,
                 Identifier1: Identifier1,
                 CloseAngleBracket1: CloseAngleBracket1
+            }
+        }
+    }
+
+    jsxContent(ctx) {
+        if (ctx.Identifier) {
+            const Identifier = ctx.Identifier[0].image
+            return {
+                type: 'JSXCONTENT', Identifier: Identifier
+            }
+        } else if (ctx.Literal) {
+            const Literal = ctx.Literal[0].image
+            return {
+                type: 'JSXCONTENT', Literal: Literal
+            }
+        } else if (ctx.StringLiteral) {
+            const StringLiteral = ctx.StringLiteral[0].image
+            return {
+                type: 'JSXCONTENT', StringLiteral: StringLiteral
+            }
+        } else if (ctx.Comma) {
+            const Comma = ctx.Comma[0].image
+            return {
+                type: 'JSXCONTENT', Comma: Comma
+            }
+        } else if (ctx.Point) {
+            const Point = ctx.Point[0].image
+            return {
+                type: 'JSXCONTENT', Point: Point
+            }
+        } else if (ctx.Operator) {
+            const Operator = ctx.Operator[0].image
+            return {
+                type: 'JSXCONTENT', Operator: Operator
             }
         }
     }

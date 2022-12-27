@@ -126,24 +126,24 @@ class DiyreactParser extends CstParser {
             $.CONSUME(Identifier)
             $.CONSUME(OpenParenthesis)
             $.OPTION(() => {
-                $.SUBRULE($.functionVariables);
-            });
+                $.SUBRULE($.functionVariables)
+            })
             $.CONSUME(CloseParenthesis)
             $.CONSUME(OpenBracket)
             $.OPTION1(() => {
                 $.SUBRULE($.statement)
             })
             $.CONSUME(CloseBracket)
-        });
+        })
 
-        $.RULE("functionVariables", () => {
+        $.RULE('functionVariables', () => {
             $.MANY_SEP({
                 SEP: Comma,
                 DEF: () => {
-                    $.CONSUME(Identifier);
-                },
-            });
-        });
+                    $.CONSUME(Identifier)
+                }
+            })
+        })
 
         //literals form : (StringLiteral | MultiLineStringLiteral | Literal)
         $.RULE('literals', () => {
@@ -168,16 +168,11 @@ class DiyreactParser extends CstParser {
             $.CONSUME(OpenAngleBracket)
             $.CONSUME(Identifier)
             $.CONSUME(CloseAngleBracket)
-            // $.OPTION(() => {
-            //     $.MANY(() => {
-            //         $.OR([
-            //             {ALT: () => $.CONSUME(Identifier)},
-            //             {ALT: () => $.CONSUME(Comma)},
-            //             {ALT: () => $.CONSUME(Point)},
-            //             {ALT: () => $.CONSUME(Operator)}
-            //         ])
-            //     })
-            // })
+            $.OPTION(() => {
+                $.MANY(() => {
+                    $.SUBRULE($.jsxContent)
+                })
+            })
             $.OPTION1(() => {
                 $.MANY1(() => {
                     $.SUBRULE($.jsxExpression)
@@ -186,6 +181,17 @@ class DiyreactParser extends CstParser {
             $.CONSUME(OpenEndAngleBracket)
             $.CONSUME1(Identifier)
             $.CONSUME1(CloseAngleBracket)
+        })
+
+        $.RULE('jsxContent', () => {
+            $.OR([
+                {ALT: () => $.CONSUME(Identifier)},
+                {ALT: () => $.CONSUME(Literal)},
+                {ALT: () => $.CONSUME(StringLiteral)},
+                {ALT: () => $.CONSUME(Comma)},
+                {ALT: () => $.CONSUME(Point)},
+                {ALT: () => $.CONSUME(Operator)}
+            ])
         })
 
         //returnStatement form : return (literals | jsxExpression | operation | statement)
@@ -215,12 +221,12 @@ class DiyreactParser extends CstParser {
             $.CONSUME1(Identifier)
             $.CONSUME(OpenParenthesis)
             $.OPTION2(() => {
-                $.SUBRULE($.functionCallVariables);
+                $.SUBRULE($.functionCallVariables)
             })
             $.CONSUME(CloseParenthesis)
         })
 
-        $.RULE("functionCallVariables", () => {
+        $.RULE('functionCallVariables', () => {
             $.MANY_SEP({
                 SEP: Comma,
                 DEF: () => {
@@ -231,9 +237,9 @@ class DiyreactParser extends CstParser {
                         {ALT: () => $.SUBRULE($.statement)},
                         {ALT: () => $.CONSUME2(Identifier)}
                     ])
-                },
-            });
-        });
+                }
+            })
+        })
 
         // very important to call this after all the rules have been defined.
         // otherwise the parser may not work correctly as it will lack information
