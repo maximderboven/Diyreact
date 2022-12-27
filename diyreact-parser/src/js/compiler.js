@@ -1,4 +1,4 @@
-import diyreact from '../../dist'
+import diyreact from './index'
 
 export function compile(input) {
     let returnString = ''
@@ -127,11 +127,11 @@ export function compile(input) {
     function loadFunctionVariables(element) {
         returnString += `(`
 
-        for (let index = 0; index < element.length; index++) {
+        for (let index = 0; index < element.Variable.length; index++) {
             if (index > 0) {
-                returnString += `, `
+                returnString += `,`
             }
-            returnString += `${element[index].VariableType} ${element[index].Identifier}`
+            returnString += `${element.Variable[index]}`
         }
         returnString += `) `
     }

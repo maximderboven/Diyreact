@@ -5,12 +5,14 @@ const Le = require('../src/js/lexer')
 const P = require('../src/js/parser')
 const V = require('../src/js/visitor')
 const C = require('../src/js/compiler')
+const {visit} = require('../src/js/visitor')
 
 test('test', () => {
-    const input = `
-const optelling = optellen(getal, 2)
-console.log(optelling)
-console.log(naam)`
+    const input = `const optelling = optellen(getal, 2)
+console.log(optelling)`
+
+    const cst = P.parse(input)
+    const ast = V.visit(input)
     const c = C.compile(input)
     console.log(c)
 })

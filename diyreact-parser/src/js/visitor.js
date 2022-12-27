@@ -19,8 +19,7 @@ class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
                 statements.push(statement)
             }
             return {
-                type: 'PROGRAM',
-                program: statements
+                type: 'PROGRAM', program: statements
             }
         }
         return {
@@ -37,8 +36,7 @@ class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
         const exportStatement = this.visit(ctx.exportStatement)
         const returnStatement = this.visit(ctx.returnStatement)
         const statement = {
-            type: 'STATEMENT',
-            statement: ''
+            type: 'STATEMENT', statement: ''
         }
         if (importStatement) {
             statement.statement = importStatement
@@ -84,17 +82,11 @@ class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
             const From = ctx.From[0].image
             const Identifier = ctx.Identifier[0].image
             return {
-                type: 'IMPORTSTATEMENT',
-                Import: Import,
-                ImportName: Identifier,
-                From: From,
-                ImportSource: ImportSource
+                type: 'IMPORTSTATEMENT', Import: Import, ImportName: Identifier, From: From, ImportSource: ImportSource
             }
         }
         return {
-            type: 'IMPORTSTATEMENT',
-            Import: Import,
-            ImportSource: ImportSource
+            type: 'IMPORTSTATEMENT', Import: Import, ImportSource: ImportSource
         }
     }
 
@@ -105,10 +97,7 @@ class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
         const Identifier = ctx.Identifier[0].image
 
         return {
-            type: 'ASTERISKIMPORT',
-            Asterisk: Asterisk,
-            As: As,
-            ImportName: Identifier
+            type: 'ASTERISKIMPORT', Asterisk: Asterisk, As: As, ImportName: Identifier
         }
     }
 
@@ -118,10 +107,7 @@ class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
         const Identifier = ctx.Identifier[0].image
         const CloseBracket = ctx.CloseBracket[0].image
         return {
-            type: 'CURLYIMPORT',
-            OpenBracket: OpenBracket,
-            ImportName: Identifier,
-            CloseBracket: CloseBracket
+            type: 'CURLYIMPORT', OpenBracket: OpenBracket, ImportName: Identifier, CloseBracket: CloseBracket
         }
     }
 
@@ -134,31 +120,21 @@ class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
             if (ctx.Default) {
                 const Default = ctx.Default[0].image
                 return {
-                    type: 'EXPORTSTATEMENT',
-                    Export: Export,
-                    Default: Default,
-                    exports: variableDeclaration
+                    type: 'EXPORTSTATEMENT', Export: Export, Default: Default, exports: variableDeclaration
                 }
             }
             return {
-                type: 'EXPORTSTATEMENT',
-                Export: Export,
-                exports: variableDeclaration
+                type: 'EXPORTSTATEMENT', Export: Export, exports: variableDeclaration
             }
         } else {
             if (ctx.Default) {
                 const Default = ctx.Default[0].image
                 return {
-                    type: 'EXPORTSTATEMENT',
-                    Export: Export,
-                    Default: Default,
-                    exports: functionDeclaration
+                    type: 'EXPORTSTATEMENT', Export: Export, Default: Default, exports: functionDeclaration
                 }
             }
             return {
-                type: 'EXPORTSTATEMENT',
-                Export: Export,
-                exports: functionDeclaration
+                type: 'EXPORTSTATEMENT', Export: Export, exports: functionDeclaration
             }
         }
     }
@@ -192,9 +168,7 @@ class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
             return object
         } else {
             return {
-                type: 'VARIABLEDECLARATION',
-                VariableType: VariableType,
-                Identifier: Identifier
+                type: 'VARIABLEDECLARATION', VariableType: VariableType, Identifier: Identifier
             }
         }
     }
@@ -210,10 +184,7 @@ class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
         const OpenBracket = ctx.OpenBracket[0].image
         const statement = this.visit(ctx.statement)
         const CloseBracket = ctx.CloseBracket[0].image
-        if (
-            functionVariables &&
-            statement
-        ) {
+        if (functionVariables && statement) {
             statements = []
             for (let index = 0; index < ctx.statement.length; index++) {
                 const element = this.visit(ctx.statement[index])
@@ -274,25 +245,19 @@ class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
     functionVariables(ctx) {
         if (ctx.Identifier) {
             const Identifier = ctx.Identifier[0].image
-            if (ctx.Comma) {
+            if (!ctx.Comma) {
                 return {
-                    VariableName: Identifier,
-                    type: 'FUNCTIONVARIABLES'
+                    VariableName: Identifier, type: 'FUNCTIONVARIABLES'
                 }
             } else {
-                let elements = ''
+                let elements = []
                 const Comma = ctx.Comma[0].image
                 for (let i = 0; i < ctx.Comma.length + 1; i++) {
                     const element = ctx.Identifier[i].image
-                    if (elements.length !== 0) {
-                        elements += ','
-                    }
-                    elements += element
+                    elements.push(element)
                 }
                 return {
-                    type: 'FUNCTIONVARIABLES',
-                    Variable: elements,
-                    Comma: Comma
+                    type: 'FUNCTIONVARIABLES', Variable: elements, Comma: Comma
                 }
             }
         }
@@ -315,13 +280,11 @@ class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
         const operation = this.visit(ctx.operation)
         if (jsxExpression) {
             return {
-                type: 'EXPRESSION',
-                expression: jsxExpression
+                type: 'EXPRESSION', expression: jsxExpression
             }
         } else if (operation) {
             return {
-                type: 'EXPRESSION',
-                expression: operation
+                type: 'EXPRESSION', expression: operation
             }
         }
     }
@@ -333,18 +296,12 @@ class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
         if (ctx.Literal) {
             const Literal = ctx.Literal[0].image
             return {
-                type: 'OPERATION',
-                FirstPart: Identifier,
-                Operator: Operator,
-                SecondPart: Literal
+                type: 'OPERATION', FirstPart: Identifier, Operator: Operator, SecondPart: Literal
             }
         } else {
             const Identifier1 = ctx.Identifier[1].image
             return {
-                type: 'OPERATION',
-                FirstPart: Identifier,
-                Operator: Operator,
-                SecondPart: Identifier1
+                type: 'OPERATION', FirstPart: Identifier, Operator: Operator, SecondPart: Identifier1
             }
         }
     }
@@ -387,9 +344,7 @@ class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
         const expression = this.visit(ctx.expression)
         const callFunction = this.visit(ctx.callFunction)
         const returnStat = {
-            type: 'RETURN',
-            Return: Return,
-            returnValue: ''
+            type: 'RETURN', Return: Return, returnValue: ''
         }
         if (expression) {
             returnStat.returnValue = expression
@@ -402,145 +357,87 @@ class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
     }
 
     callFunction(ctx) {
-        let element
-        if (ctx.Identifier[1] && ctx.Point) {
-            const Identifier = ctx.Identifier[0].image
-            const Point = ctx.Point[0].image
-            const Identifier1 = ctx.Identifier[1].image
-            const OpenParenthesis = ctx.OpenParenthesis[0].image
-
-            const jsxExpression = this.visit(ctx.jsxExpression)
-            const statement = this.visit(ctx.statement)
-
-            const CloseParenthesis = ctx.CloseParenthesis[0].image
-
-            if (ctx.Comma) {
-                const Comma = ctx.Comma[0].image
-                const values = {
-                    type: 'CALLFUNCTION',
-                    FunctionName: Identifier,
-                    OpenParenthesis: OpenParenthesis,
-                    value: '',
-                    CloseParenthesis: CloseParenthesis
-                }
-                element = ''
-                if (ctx.Literal) {
-                    for (let index = 0; index < ctx.Literal.length; index++) {
-                        const element1 = ctx.Literal[index]
-                        element += element1 + Comma
-                    }
-                } else if (ctx.StringLiteral) {
-                    for (let index = 0; index < ctx.StringLiteral.length; index++) {
-                        const element1 = ctx.StringLiteral[index]
-                        element += element1 + Comma
-                    }
-                } else if (ctx.Identifier) {
-                    for (let index = 0; index < ctx.Identifier.length; index++) {
-                        const element1 = ctx.Identifier[index]
-                        element += element1 + Comma
-                    }
-                } else if (jsxExpression) {
-                    for (let index = 0; index < ctx.jsxExpression.length; index++) {
-                        const element1 = ctx.jsxExpression[index]
-                        element += element1 + Comma
-                    }
-                }
-                values.value = element
-                return values
-            }
-            const returnItem = {
+        const Identifier = ctx.Identifier[0].image
+        const OpenParenthesis = ctx.OpenParenthesis[0].image
+        const CloseParenthesis = ctx.CloseParenthesis[0].image
+        const variables = this.visit(ctx.functionCallVariables)
+        let callFunction
+        if (variables) {
+            callFunction = {
                 type: 'CALLFUNCTION',
-                VariableName: Identifier,
-                Point: Point,
-                FunctionName: Identifier1,
+                Identifier: Identifier,
                 OpenParenthesis: OpenParenthesis,
-                value: '',
+                variables: variables,
                 CloseParenthesis: CloseParenthesis
             }
+        } else {
+            callFunction = {
+                type: 'CALLFUNCTION',
+                Identifier: Identifier,
+                OpenParenthesis: OpenParenthesis,
+                CloseParenthesis: CloseParenthesis
+            }
+        }
+        if (ctx.Identifier[1]) {
+            callFunction.FunctionName1 = ctx.Identifier[1].image
+        }
+        return callFunction
+    }
+
+    functionCallVariables(ctx) {
+        if (!ctx.Comma) {
             if (ctx.Literal) {
-                returnItem.value = ctx.Literal[0].image
-            } else if (ctx.StringLiteral) {
-                returnItem.value = ctx.StringLiteral[0].image
-            } else if (ctx.Identifier) {
-                returnItem.value = ctx.Identifier[0].image
-            } else if (jsxExpression) {
-                returnItem.value = jsxExpression
-            } else if (statement) {
-                returnItem.value = statement
-            } else {
                 return {
-                    type: 'CALLFUNCTION',
-                    VariableName: Identifier,
-                    Point: Point,
-                    FunctionName: Identifier1,
-                    OpenParenthesis: OpenParenthesis,
-                    CloseParenthesis: CloseParenthesis
+                    type: 'FUNCTIONCALLVARIABLES', Variable: ctx.Literal[0].image
+                }
+            } else if (ctx.StringLiteral) {
+                return {
+                    type: 'FUNCTIONCALLVARIABLES', Variable: ctx.StringLiteral[0].image
+                }
+            } else if (ctx.MultiLineStringLiteral) {
+                return {
+                    type: 'FUNCTIONCALLVARIABLES', Variable: ctx.MultiLineStringLiteral[0].image
+                }
+            } else if (ctx.jsxExpression) {
+                return {
+                    type: 'FUNCTIONCALLVARIABLES', Variable: this.visit(ctx.jsxExpression)
+                }
+            } else if (ctx.Identifier) {
+                return {
+                    type: 'FUNCTIONCALLVARIABLES', Variable: ctx.Identifier[0].image
                 }
             }
-            return returnItem
         } else {
-            const Identifier = ctx.Identifier[0].image
-            const OpenParenthesis = ctx.OpenParenthesis[0].image
-            const jsxExpression = this.visit(ctx.jsxExpression)
-            const CloseParenthesis = ctx.CloseParenthesis[0].image
-            if (!ctx.Comma) {
-                const element = {
-                    type: 'CALLFUNCTION',
-                    FunctionName: Identifier,
-                    OpenParenthesis: OpenParenthesis,
-                    value: '',
-                    CloseParenthesis: CloseParenthesis
+            let elements = []
+            const Comma = ctx.Comma[0].image
+
+            if (ctx.Literal) {
+                for (let i = 0; i < ctx.Literal.length; i++) {
+                    elements.push(ctx.Literal[i])
                 }
-                if (ctx.Literal) {
-                    element.value = ctx.Literal[0].image
-                } else if (ctx.StringLiteral) {
-                    element.value = ctx.StringLiteral[0].image
-                } else if (ctx.Identifier) {
-                    element.value = ctx.Identifier[0].image
-                } else if (jsxExpression) {
-                    element.value = jsxExpression
-                } else {
-                    return {
-                        type: 'CALLFUNCTION',
-                        FunctionName: Identifier,
-                        OpenParenthesis: OpenParenthesis,
-                        CloseParenthesis: CloseParenthesis
-                    }
+            }
+            if (ctx.StringLiteral) {
+                for (let i = 0; i < ctx.StringLiteral.length; i++) {
+                    elements.push(ctx.StringLiteral[i])
                 }
-                return element
-            } else {
-                const Comma = ctx.Comma[0].image
-                const values = {
-                    type: 'CALLFUNCTION',
-                    FunctionName: Identifier,
-                    OpenParenthesis: OpenParenthesis,
-                    value: '',
-                    CloseParenthesis: CloseParenthesis
+            }
+            if (ctx.MultiLineStringLiteral) {
+                for (let i = 0; i < ctx.MultiLineStringLiteral.length; i++) {
+                    elements.push(ctx.MultiLineStringLiteral[i])
                 }
-                element = ''
-                if (ctx.Literal) {
-                    for (let index = 0; index < ctx.Literal.length; index++) {
-                        const element1 = ctx.Literal[index].image
-                        element += element1 + Comma
-                    }
-                } else if (ctx.StringLiteral) {
-                    for (let index = 0; index < ctx.StringLiteral.length; index++) {
-                        const element1 = ctx.StringLiteral[index].image
-                        element += element1 + Comma
-                    }
-                } else if (ctx.Identifier) {
-                    for (let index = 0; index < ctx.Identifier.length; index++) {
-                        const element1 = ctx.Identifier[index].image
-                        element += element1 + Comma
-                    }
-                } else if (jsxExpression) {
-                    for (let index = 0; index < ctx.jsxExpression.length; index++) {
-                        const element1 = ctx.jsxExpression[index]
-                        element += element1 + Comma
-                    }
+            }
+            if (ctx.jsxExpression) {
+                for (let i = 0; i < ctx.jsxExpression.length; i++) {
+                    elements.push(this.visit(ctx.jsxExpression[i]))
                 }
-                values.value = element
-                return values
+            }
+            if (ctx.Identifier) {
+                for (let i = 0; i < ctx.Identifier.length; i++) {
+                    elements.push(ctx.Identifier[i])
+                }
+            }
+            return {
+                type: 'FUNCTIONCALLVARIABLES', Variable: elements, Comma: Comma
             }
         }
     }

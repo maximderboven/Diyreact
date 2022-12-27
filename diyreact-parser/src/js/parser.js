@@ -126,20 +126,24 @@ class DiyreactParser extends CstParser {
             $.CONSUME(Identifier)
             $.CONSUME(OpenParenthesis)
             $.OPTION(() => {
-                $.MANY_SEP({
-                    SEP: Comma,
-                    DEF: () => {
-                        $.CONSUME2(Identifier)
-                    }
-                })
-            })
+                $.SUBRULE($.functionVariables);
+            });
             $.CONSUME(CloseParenthesis)
             $.CONSUME(OpenBracket)
             $.OPTION1(() => {
                 $.SUBRULE($.statement)
             })
             $.CONSUME(CloseBracket)
-        })
+        });
+
+        $.RULE("functionVariables", () => {
+            $.MANY_SEP({
+                SEP: Comma,
+                DEF: () => {
+                    $.CONSUME(Identifier);
+                },
+            });
+        });
 
         //literals form : (StringLiteral | MultiLineStringLiteral | Literal)
         $.RULE('literals', () => {
@@ -211,21 +215,26 @@ class DiyreactParser extends CstParser {
             $.CONSUME1(Identifier)
             $.CONSUME(OpenParenthesis)
             $.OPTION2(() => {
-                $.MANY_SEP({
-                    SEP: Comma,
-                    DEF: () => {
-                        $.OR([
-                            {ALT: () => $.CONSUME(Literal)},
-                            {ALT: () => $.CONSUME(StringLiteral)},
-                            {ALT: () => $.SUBRULE($.jsxExpression)},
-                            {ALT: () => $.SUBRULE($.statement)},
-                            {ALT: () => $.CONSUME2(Identifier)}
-                        ])
-                    }
-                })
+                $.SUBRULE($.functionCallVariables);
             })
             $.CONSUME(CloseParenthesis)
         })
+
+        $.RULE("functionCallVariables", () => {
+            $.MANY_SEP({
+                SEP: Comma,
+                DEF: () => {
+                    $.OR([
+                        {ALT: () => $.CONSUME(Literal)},
+                        {ALT: () => $.CONSUME(StringLiteral)},
+                        {ALT: () => $.SUBRULE($.jsxExpression)},
+                        {ALT: () => $.SUBRULE($.statement)},
+                        {ALT: () => $.CONSUME2(Identifier)}
+                    ])
+                },
+            });
+        });
+
         // very important to call this after all the rules have been defined.
         // otherwise the parser may not work correctly as it will lack information
         // derived during the self-analysis phase.
