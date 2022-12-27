@@ -44,15 +44,7 @@ const element = {
 function createElement(tag, ...children) {
     return {
         tag: tag,
-        children: children.map(child => {
-            if (typeof child === "string") {
-                return {
-                    tag: "TEXT",
-                    text: child,
-                };
-            }
-            return child;
-        })
+        children: children
     }
 }
 
@@ -61,8 +53,6 @@ function render(element, container) {
         element.forEach(e => {
             render(e, container)
         })
-    } else if (element.tag === "TEXT") {
-        container.appendChild(document.createTextNode(element.text));
     } else if (typeof element === "string") {
         container.appendChild(document.createTextNode(element))
     } else {
