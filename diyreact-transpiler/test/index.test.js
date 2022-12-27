@@ -9,12 +9,7 @@ const {visit} = require('../src/js/visitor')
 
 test('test', () => {
     const input = `
-const element = <div><h1>Demo project</h1><h2>Maxim Derboven</h2></div>
-console.log(element)
+const element = <div><h1>Programmeren 3</h1><h2>Maxim Derboven</h2></div>
     `
-
-    const cst = P.parse(input)
-    const ast = V.visit(input)
-    const c = C.compile(input)
     console.log(c)
 })

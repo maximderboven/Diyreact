@@ -117,14 +117,14 @@ export function compile(input) {
             returnString += `"))`
         }
         if (element.jsxExpression) {
-            returnString += `.appendChild(`
             //jsxExpression can be an object or an array of objects
             if (Array.isArray(element.jsxExpression)) {
                 for (let index = 0; index < element.jsxExpression.length; index++) {
+                    returnString += `.appendChild(`
                     loadJSX(element.jsxExpression[index])
+                    returnString += `)`
                 }
             }
-            returnString += `)`
         }
         returnString += ')'
     }

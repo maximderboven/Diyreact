@@ -11,5 +11,5 @@ console.log(optelling)
 const naam = "Maxim"
 console.log(naam)
 
-const element = <div><h1>Demo project</h1><h2>Maxim Derboven</h2></div>
+const element = <div><h1>Programmeren 3</h1><h2>Maxim Derboven</h2></div>
 console.log(element)
