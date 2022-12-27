@@ -388,15 +388,15 @@ class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
         if (!ctx.Comma) {
             if (ctx.Literal) {
                 return {
-                    type: 'FUNCTIONCALLVARIABLES', Variable: ctx.Literal[0].image
+                    type: 'FUNCTIONCALLVARIABLES', Variable: ctx.Literal[0]
                 }
             } else if (ctx.StringLiteral) {
                 return {
-                    type: 'FUNCTIONCALLVARIABLES', Variable: ctx.StringLiteral[0].image
+                    type: 'FUNCTIONCALLVARIABLES', Variable: ctx.StringLiteral[0]
                 }
             } else if (ctx.MultiLineStringLiteral) {
                 return {
-                    type: 'FUNCTIONCALLVARIABLES', Variable: ctx.MultiLineStringLiteral[0].image
+                    type: 'FUNCTIONCALLVARIABLES', Variable: ctx.MultiLineStringLiteral[0]
                 }
             } else if (ctx.jsxExpression) {
                 return {
@@ -404,7 +404,7 @@ class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
                 }
             } else if (ctx.Identifier) {
                 return {
-                    type: 'FUNCTIONCALLVARIABLES', Variable: ctx.Identifier[0].image
+                    type: 'FUNCTIONCALLVARIABLES', Variable: ctx.Identifier[0]
                 }
             }
         } else {

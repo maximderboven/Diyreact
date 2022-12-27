@@ -125,15 +125,16 @@ export function compile(input) {
     }
 
     function loadFunctionVariables(element) {
-        returnString += `(`
-
-        for (let index = 0; index < element.Variable.length; index++) {
-            if (index > 0) {
-                returnString += `,`
+        if(element.Variable.length) {
+            for (let index = 0; index < element.Variable.length; index++) {
+                if (index > 0) {
+                    returnString += `,`
+                }
+                returnString += `${element.Variable[index].image}`
             }
-            returnString += `${element.Variable[index]}`
+        } else {
+            returnString += `${element.Variable.image}`
         }
-        returnString += `) `
     }
 
     function loaderReturn(element) {
@@ -154,12 +155,14 @@ export function compile(input) {
 
 
     function loadcallFunction(element) {
-        if(element.VariableName) {
-            returnString += `${element.VariableName}.`
+        returnString += `${element.Identifier}`
+        if(element.FunctionName1) {
+            returnString += `.${element.FunctionName1}`
         }
-        returnString += `${element.FunctionName}(`
-        if (element.functionVariables) {
-            loadFunctionVariables(element.functionVariables)
+        returnString += `(`
+
+        if (element.variables) {
+            loadFunctionVariables(element.variables)
         }
         returnString += `) \n`
     }
