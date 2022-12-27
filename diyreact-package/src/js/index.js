@@ -22,19 +22,13 @@ const element = {
             tag: "div",
             children: [
                 {
-                    tag: "TEXT",
-                    children: {
-                        text: "Hello World",
-                        },
+                    "Hello World",
                 },
                 {
                     tag: "p",
                     children: [
                         {
-                            tag: "TEXT",
-                            children: {
-                                text: "Hello World",
-                                },
+                         "Hello World",
                         },
               ],
         },
