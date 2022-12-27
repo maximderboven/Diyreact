@@ -383,6 +383,7 @@ class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
         }
     }
 
+    // <div>content</div>
     jsxContent(ctx) {
         if (ctx.Identifier) {
             const Identifier = ctx.Identifier[0].image
@@ -434,6 +435,7 @@ class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
         return returnStat
     }
 
+    // call.function()
     callFunction(ctx) {
         const Identifier = ctx.Identifier[0].image
         const OpenParenthesis = ctx.OpenParenthesis[0].image
@@ -462,6 +464,7 @@ class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
         return callFunction
     }
 
+    // call.function(variables)
     functionCallVariables(ctx) {
         if (!ctx.Comma) {
             if (ctx.Literal) {

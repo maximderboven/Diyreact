@@ -1,5 +1,5 @@
 {
-    "name": "diyreact-parser",
+    "name": "diyreact-transpiler",
     "version": "1.0.0",
     "private": true,
     "author": "Maxim Derboven",

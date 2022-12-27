@@ -9,7 +9,9 @@ const {visit} = require('../src/js/visitor')
 
 test('test', () => {
     const input = `
-const element = <div><h1>Programmeren 3</h1><h2>Maxim Derboven</h2></div>
+import * as diy from 'diyreact'
     `
-    console.log(c)
+    const ast = V.visit(input)
+    const cst  = P.parse(input)
+    console.log(C.compile(input))
 })

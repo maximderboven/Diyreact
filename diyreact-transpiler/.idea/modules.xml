@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../diyreact-parser/.idea/diyreact-parser.iml" filepath="$PROJECT_DIR$/../diyreact-parser/.idea/diyreact-parser.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/diyreact-transpiler.iml" filepath="$PROJECT_DIR$/.idea/diyreact-transpiler.iml" />
     </modules>
   </component>
 </project>

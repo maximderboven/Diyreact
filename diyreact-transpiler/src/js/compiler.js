@@ -1,4 +1,5 @@
 const V = require('./visitor')
+
 export function compile(input) {
     let returnString = ''
     const ast = V.visit(input)
@@ -101,29 +102,70 @@ export function compile(input) {
     }
 
     function loadJSX(element) {
-        returnString += `document.createElement("${element.Identifier}")`
+        returnString += `Diyreact.createElement("${element.Identifier}"`
 
-        if (element.jsxContent) {
-            returnString += `.appendChild(document.createTextNode("`
+        if (element.jsxContent && !element.jsxExpression) {
+            returnString += `, "`
             //jsxContent can be a string or an array of strings
-            if (typeof element.jsxContent === 'string') {
+            if (!Array.isArray(element.jsxContent)) {
                 returnString += `${element.jsxContent} `
             }
             if (Array.isArray(element.jsxContent)) {
                 for (let index = 0; index < element.jsxContent.length; index++) {
-                    returnString += `${element.jsxContent[index].Identifier} `
+                    if (element.jsxContent[index].Identifier) {
+                        returnString += `${element.jsxContent[index].Identifier} `
+                    } else if (element.jsxContent[index].Literal) {
+                        returnString += `${element.jsxContent[index].Literal} `
+                    } else if (element.jsxContent[index].Operator) {
+                        returnString += `${element.jsxContent[index].Operator} `
+                    }
                 }
             }
-            returnString += `"))`
+
+            returnString += `"`
         }
-        if (element.jsxExpression) {
-            //jsxExpression can be an object or an array of objects
+        if (element.jsxExpression && element.jsxContent) {
+            returnString += `, [`
+            returnString += `"`
+            //jsxContent can be a string or an array of strings
+            if (!Array.isArray(element.jsxContent)) {
+                returnString += `${element.jsxContent} `
+            }
+            if (Array.isArray(element.jsxContent)) {
+                for (let index = 0; index < element.jsxContent.length; index++) {
+                    if (element.jsxContent[index].Identifier) {
+                        returnString += `${element.jsxContent[index].Identifier} `
+                    } else if (element.jsxContent[index].Literal) {
+                        returnString += `${element.jsxContent[index].Literal} `
+                    } else if (element.jsxContent[index].Operator) {
+                        returnString += `${element.jsxContent[index].Operator} `
+                    }
+                }
+            }
+            returnString += `",`
             if (Array.isArray(element.jsxExpression)) {
                 for (let index = 0; index < element.jsxExpression.length; index++) {
-                    returnString += `.appendChild(`
                     loadJSX(element.jsxExpression[index])
-                    returnString += `)`
+                    if (index < element.jsxExpression.length - 1) {
+                        returnString += `, `
+                    }
                 }
+
+            }
+            returnString += `]`
+        }
+
+        if (element.jsxExpression && !element.jsxContent) {
+            //jsxExpression can be an object or an array of objects
+            if (Array.isArray(element.jsxExpression)) {
+                returnString += `, [`
+                for (let index = 0; index < element.jsxExpression.length; index++) {
+                    loadJSX(element.jsxExpression[index])
+                    if (index < element.jsxExpression.length - 1) {
+                        returnString += `, `
+                    }
+                }
+                returnString += `]`
             }
         }
         returnString += ')'
@@ -132,6 +174,7 @@ export function compile(input) {
     function loadOperation(element) {
         returnString += `${element.FirstPart} ${element.Operator} ${element.SecondPart} `
     }
+
     function loadFunction(element) {
         returnString += `function ${element.FunctionName} `
         if (element.functionVariables) {
@@ -151,7 +194,7 @@ export function compile(input) {
     }
 
     function loadFunctionVariables(element) {
-        if(element.Variable.length) {
+        if (element.Variable.length) {
             for (let index = 0; index < element.Variable.length; index++) {
                 if (index > 0) {
                     returnString += `,`
@@ -166,9 +209,9 @@ export function compile(input) {
     function loaderReturn(element) {
         returnString += `return `
         if (element.returnValue.type === 'EXPRESSION') {
-            if(element.returnValue.expression.type === 'JSXEXPRESSION'){
+            if (element.returnValue.expression.type === 'JSXEXPRESSION') {
                 loadJSX(element.returnValue.expression)
-            } else if(element.returnValue.expression.type === 'OPERATION'){
+            } else if (element.returnValue.expression.type === 'OPERATION') {
                 loadOperation(element.returnValue.expression)
             }
         } else if (element.returnValue.type === 'CALLFUNCTION') {
@@ -182,7 +225,7 @@ export function compile(input) {
 
     function loadcallFunction(element) {
         returnString += `${element.Identifier}`
-        if(element.FunctionName1) {
+        if (element.FunctionName1) {
             returnString += `.${element.FunctionName1}`
         }
         returnString += `(`

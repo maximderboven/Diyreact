@@ -1,58 +1,74 @@
-function render(element, container) {
-    const dom =
-        element.tag == "TEXT"
-            ? document.createTextNode("")
-            : document.createElement(element.tag);
-    const isProperty = (key) => key !== "children";
-    Object.keys(element.props)
-        .filter(isProperty)
-        .forEach((name) => {
-            dom[name] = element.props[name];
-        });
-    element.props.children.forEach((element) => {
-        render(element, dom);
-    });
-    if (typeof element.props.attribute != "undefined") {
-        if (element.props.attribute != "") {
-            const attributes = element.props.attribute.match(
-                /([a-zA-Z]+\s?=\s?("\S+"))/g
-            );
-            attributes.forEach((attribute) => {
-                const myattribute = attribute.split("=");
-                dom.setAttribute(
-                    myattribute[0].replace(" ", ""),
-                    myattribute[1].replace(/"/g, "")
-                );
-            });
-        }
-    }
-    container.appendChild(dom);
-    return container;
-}
-
-function createElement(tag, attribute, ...children) {
-    return {
-        tag,
-        props: {
-            attribute,
-            children: children.map((child) =>
-                typeof child === "object" ? child : createText(child)
-            ),
-        },
-    };
-}
-
-function createText(text) {
-    return {
-        tag: "TEXT",
-        props: {
-            nodeValue: text,
-            children: [],
-        },
-    };
-}
-
-export const Glacier = {
+export const Diyreact = {
     createElement,
     render,
 };
+
+/*
+ELEMENTS SHOULD BE LIKE THIS:
+diyreact.createElement("div",  [
+    diyreact.createElement("h1", "Hello World"),
+    diyreact.createElement("div", [
+        "Hello World",
+        diyreact.createElement("p", "This is a paragraph"),
+    ]),
+const element = {
+    tag: "div",
+    children: [
+        {
+            tag: "h1",
+            children: "Hello World",
+        },
+        {
+            tag: "div",
+            children: [
+                {
+                    tag: "TEXT",
+                    children: {
+                        text: "Hello World",
+                        },
+                },
+                {
+                    tag: "p",
+                    children: [
+                        {
+                            tag: "TEXT",
+                            children: {
+                                text: "Hello World",
+                                },
+                        },
+              ],
+        },
+    ],
+};
+ */
+function createElement(tag, ...children) {
+    return {
+        tag: tag,
+        children: children.map(child => {
+            if (typeof child === "string") {
+                return {
+                    tag: "TEXT",
+                    text: child,
+                };
+            }
+            return child;
+        })
+    }
+}
+
+function render(element, container) {
+    if (Array.isArray(element)) {
+        element.forEach(e => {
+            render(e, container)
+        })
+    } else if (element.tag === "TEXT") {
+        container.appendChild(document.createTextNode(element.text));
+    } else if (typeof element === "string") {
+        container.appendChild(document.createTextNode(element))
+    } else {
+        const dom = document.createElement(element.tag)
+        element.children.forEach(child => render(child, dom))
+        container.appendChild(dom)
+    }
+    return container;
+}

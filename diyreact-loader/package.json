@@ -6,7 +6,7 @@
     "license": "MIT",
     "main": "dist/index.js",
     "devDependencies": {
-        "diyreact-parser": "file:../diyreact-parser",
+        "diyreact-transpiler": "file:../diyreact-transpiler",
         "@babel/cli": "^7.18.10",
         "@babel/core": "^7.19.1",
         "@babel/preset-env": "^7.19.1",
