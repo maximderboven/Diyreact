@@ -101,74 +101,36 @@ export function compile(input) {
         returnString += '\n'
     }
 
-    function loadJSX(element) {
-        returnString += `Diyreact.createElement("${element.Identifier}"`
-
-        if (element.jsxContent && !element.jsxExpression) {
-            returnString += `, "`
-            //jsxContent can be a string or an array of strings
-            if (!Array.isArray(element.jsxContent)) {
-                returnString += `${element.jsxContent} `
+    function loadJSX(element, parent) {
+        returnString += `Diyreact.createElement("${element.Identifier}",[`
+        for (let index = 0; index < element.jsxContent.length; index++) {
+            const elem = element.jsxContent[index]
+            if (elem.type === 'JSXEXPRESSION') {
+                loadJSX(elem,(element.jsxContent[index+1]))
             }
-            if (Array.isArray(element.jsxContent)) {
-                for (let index = 0; index < element.jsxContent.length; index++) {
-                    if (element.jsxContent[index].Identifier) {
-                        returnString += `${element.jsxContent[index].Identifier} `
-                    } else if (element.jsxContent[index].Literal) {
-                        returnString += `${element.jsxContent[index].Literal} `
-                    } else if (element.jsxContent[index].Operator) {
-                        returnString += `${element.jsxContent[index].Operator} `
-                    }
+            if (elem.type === 'JSXCONTENT') {
+                if (!element.jsxContent[index - 1] || element.jsxContent[index - 1].type === 'JSXEXPRESSION') {
+                    returnString += `"`
                 }
-            }
-
-            returnString += `"`
-        }
-        if (element.jsxExpression && element.jsxContent) {
-            returnString += `, [`
-            returnString += `"`
-            //jsxContent can be a string or an array of strings
-            if (!Array.isArray(element.jsxContent)) {
-                returnString += `${element.jsxContent} `
-            }
-            if (Array.isArray(element.jsxContent)) {
-                for (let index = 0; index < element.jsxContent.length; index++) {
-                    if (element.jsxContent[index].Identifier) {
-                        returnString += `${element.jsxContent[index].Identifier} `
-                    } else if (element.jsxContent[index].Literal) {
-                        returnString += `${element.jsxContent[index].Literal} `
-                    } else if (element.jsxContent[index].Operator) {
-                        returnString += `${element.jsxContent[index].Operator} `
-                    }
+                if (elem.Identifier) {
+                    returnString += `${elem.Identifier} `
+                } else if (elem.Literal) {
+                    returnString += `${elem.Literal} `
+                } else if (elem.Operator) {
+                    returnString += `${elem.Operator} `
                 }
-            }
-            returnString += `",`
-            if (Array.isArray(element.jsxExpression)) {
-                for (let index = 0; index < element.jsxExpression.length; index++) {
-                    loadJSX(element.jsxExpression[index])
-                    if (index < element.jsxExpression.length - 1) {
-                        returnString += `, `
-                    }
+                if (!element.jsxContent[index + 1] || element.jsxContent[index + 1].type === 'JSXEXPRESSION') {
+                    returnString += `"`
                 }
-
-            }
-            returnString += `]`
-        }
-
-        if (element.jsxExpression && !element.jsxContent) {
-            //jsxExpression can be an object or an array of objects
-            if (Array.isArray(element.jsxExpression)) {
-                returnString += `, [`
-                for (let index = 0; index < element.jsxExpression.length; index++) {
-                    loadJSX(element.jsxExpression[index])
-                    if (index < element.jsxExpression.length - 1) {
-                        returnString += `, `
-                    }
+                if (element.jsxContent[index + 1] && element.jsxContent[index + 1].type === 'JSXEXPRESSION') {
+                    returnString += `,`
                 }
-                returnString += `]`
             }
         }
-        returnString += ')'
+        returnString += '])'
+        if (parent) {
+            returnString += `,`
+        }
     }
 
     function loadOperation(element) {

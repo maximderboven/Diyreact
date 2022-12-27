@@ -9,9 +9,9 @@ const {visit} = require('../src/js/visitor')
 
 test('test', () => {
     const input = `
-import * as diy from 'diyreact'
+const x = <p>Hij <p>ondersteunt</p> gelukkig ook <strong>nummers,</strong> anders <i>was het</i> programmeren drie</p>
     `
-    const ast = V.visit(input)
     const cst  = P.parse(input)
+    const ast = V.visit(input)
     console.log(C.compile(input))
 })

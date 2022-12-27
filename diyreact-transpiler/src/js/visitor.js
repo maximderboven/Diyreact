@@ -385,7 +385,9 @@ class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
 
     // <div>content</div>
     jsxContent(ctx) {
-        if (ctx.Identifier) {
+        if (ctx.jsxExpression) {
+            return this.visit(ctx.jsxExpression)
+        } else if (ctx.Identifier) {
             const Identifier = ctx.Identifier[0].image
             return {
                 type: 'JSXCONTENT', Identifier: Identifier
@@ -530,8 +532,8 @@ export function visit(input) {
     const lexResult = diyreactLexer.tokenize(input)
     parserInstance.input = lexResult.tokens
     const cst = parserInstance.program()
-    if (parserInstance.errors.length > 0) {
-        throw Error('sad sad panda, lexing errors detected')
+    for (const error of lexResult.errors) {
+        throw Error(error.message)
     }
     return vititorInstance.visit(cst)
 }

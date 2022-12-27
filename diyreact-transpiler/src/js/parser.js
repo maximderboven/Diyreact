@@ -163,20 +163,13 @@ class DiyreactParser extends CstParser {
             ])
         })
 
-        //jsxExpression form : <identifier> (jsxExpression | literals)* </identifier>
+        //jsxExpression form : <identifier> (jsxContent)* </identifier>
         $.RULE('jsxExpression', () => {
             $.CONSUME(OpenAngleBracket)
             $.CONSUME(Identifier)
             $.CONSUME(CloseAngleBracket)
-            $.OPTION(() => {
-                $.MANY(() => {
-                    $.SUBRULE($.jsxContent)
-                })
-            })
-            $.OPTION1(() => {
-                $.MANY1(() => {
-                    $.SUBRULE($.jsxExpression)
-                })
+            $.MANY(() => {
+                $.SUBRULE($.jsxContent)
             })
             $.CONSUME(OpenEndAngleBracket)
             $.CONSUME1(Identifier)
@@ -185,6 +178,7 @@ class DiyreactParser extends CstParser {
 
         $.RULE('jsxContent', () => {
             $.OR([
+                {ALT: () => $.SUBRULE($.jsxExpression)},
                 {ALT: () => $.CONSUME(Identifier)},
                 {ALT: () => $.CONSUME(Literal)},
                 {ALT: () => $.CONSUME(StringLiteral)},
@@ -254,8 +248,8 @@ export const Parser = DiyreactParser
 export function parse(inputText) {
     const lexResult = Lexer.tokenize(inputText)
     parserInstance.input = lexResult.tokens
-    if (parserInstance.errors.length > 0) {
-        throw Error('sad sad panda, lexing errors detected')
+    for (const error of lexResult.errors) {
+        throw Error(error.message)
     }
     return parserInstance.program()
 }

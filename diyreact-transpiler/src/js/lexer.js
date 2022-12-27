@@ -96,8 +96,8 @@ allTokens.forEach((tokenType) => {
 
 export function tokenize(input) {
     const lexResult = DiyreactLexerInstance.tokenize(input)
-    if (lexResult.errors.length > 0) {
-        throw Error('sad sad panda, lexing errors detected')
+    for (const error of lexResult.errors) {
+        throw Error(error.message)
     }
     return lexResult
 }
