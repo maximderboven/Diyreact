@@ -1,8 +1,7 @@
-import diyreact from './index'
-
+const V = require('./visitor')
 export function compile(input) {
     let returnString = ''
-    const ast = diyreact.ast(input)
+    const ast = V.visit(input)
 
     //program as start otherwise there is someting wrong
     if (ast.program.length > 0) {
@@ -102,7 +101,7 @@ export function compile(input) {
     }
 
     function loadJSX(element) {
-        returnString += `${element.JSXElement} `
+        returnString += `${element.JSXElement} DIKKE ZEB`
     }
 
     function loadOperation(element) {
@@ -111,7 +110,9 @@ export function compile(input) {
     function loadFunction(element) {
         returnString += `function ${element.FunctionName} `
         if (element.functionVariables) {
+            returnString += `(`
             loadFunctionVariables(element.functionVariables)
+            returnString += `) `
         } else {
             returnString += `() `
         }

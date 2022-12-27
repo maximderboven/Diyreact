@@ -8,8 +8,10 @@ const C = require('../src/js/compiler')
 const {visit} = require('../src/js/visitor')
 
 test('test', () => {
-    const input = `const optelling = optellen(getal, 2)
-console.log(optelling)`
+    const input = `
+const element = <div><h1>Demo project</h1><h2>Maxim Derboven</h2></div>
+console.log(element)
+    `
 
     const cst = P.parse(input)
     const ast = V.visit(input)

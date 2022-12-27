@@ -253,7 +253,7 @@ class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
                 let elements = []
                 const Comma = ctx.Comma[0].image
                 for (let i = 0; i < ctx.Comma.length + 1; i++) {
-                    const element = ctx.Identifier[i].image
+                    const element = ctx.Identifier[i]
                     elements.push(element)
                 }
                 return {
