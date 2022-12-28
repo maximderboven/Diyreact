@@ -12,18 +12,24 @@ console.log(optelling)
 const naam = "Maxim Derboven"
 console.log(naam)
 
+function App() {
+    return <div>
+            <h1>Welkom bij DIYReact</h1>
+            <p>Deze tekst is een paragraaf</p>
+        </div>
+}
 
 const element = <div><h1>Derboven Maxim</h1><div><p>This is a paragraph</p></div></div>
 const element2 = <div><h1>Programmeren 3</h1><div><p>Hij ondersteunt <i>gelukkig</i> ook nummers, anders was het <strong>programmeren drie</strong></p></div></div>
+const element3 = App()
 const list = <ul><li>Item 5</li><li>Item 2</li><li>Item 3</li></ul>
 const table = <table><tr><td>Item 1</td><td>Item 2</td><td>Item 3</td></tr></table>
 
-
 console.log(element)
-console.log(element2)
 
 const root = document.getElementById('root')
 Diyreact.render(element, root)
+Diyreact.render(element3, root)
 Diyreact.render(element2, root)
 Diyreact.render(list, root)
 Diyreact.render(table, root)
