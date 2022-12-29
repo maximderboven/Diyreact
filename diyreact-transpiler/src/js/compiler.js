@@ -1,6 +1,7 @@
 const V = require('./visitor')
 
 export function compile(input) {
+    //TODO: catch options and handle them
     let returnString = ''
     const ast = V.visit(input)
 

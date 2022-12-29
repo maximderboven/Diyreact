@@ -2,35 +2,34 @@
 const C = require('../src/js/compiler')
 const assert = require("assert");
 //Syntax test:
-test ('Syntax error test 1', () => {
+test ('Syntax error on not closing tag', () => {
     const input = `
-const x = 2 : 3
+    const x = <div>hello
     `
     //check on error (does throw)
-    assert.throws(() => C.compile(input), "Received SyntaxError: Error: unexpected character: ->:<- at offset: 13, skipped 1 characters.")
+    expect(() => C.compile(input)).toThrow('Missing closing tag')
 })
 
-test ('Syntax error test 2', () => {
+test ('Syntax error on different opening and closing tags', () => {
     const input = `
-const x = 2 ?
+const x = <div>test</p>
     `
     //check on error (does throw)
-    assert.throws(() => C.compile(input
-    ), "Received SyntaxError: Error: unexpected character: ->?<- at offset: 13, skipped 1 characters.")
+    expect(() => C.compile(input)).toThrow('Opening and closing tag mismatch')
 })
 
-test ('Syntax error test 3', () => {
+test ('Syntax error unsupported symbol', () => {
     const input = `
-function (x,y,) {
+const x = true ? 3 : 2
     `
-    assert.throws(() => C.compile(input
-    ), "Received SyntaxError: Error: unexpected character: ->,<- at offset: 16, skipped 1 characters.")
+    //check on error (does throw)
+    expect(() => C.compile(input)).toThrow("unexpected character: ->?<- at offset: 16, skipped 1 characters.")
 })
 
-test ('Syntax error test 4', () => {
+test('test closing } in function', () => {
     const input = `
-function (x,y) {
+    function App() {
     `
-    assert.throws(() => C.compile(input
-    ))
+    //check on error (does throw)
+    expect(() => C.compile(input)).toThrow('Missing close bracket')
 })

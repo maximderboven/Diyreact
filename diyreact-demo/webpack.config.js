@@ -27,7 +27,11 @@ module.exports = {
             },
             {
                 test: /\.jsx$/,
-                loader: path.resolve('../diyreact-loader/src/index.js')
+                loader: path.resolve('../diyreact-loader/src/index.js'),
+                // TODO: add options
+                // options: {
+                //     generateDiagram: true
+                // }
             }
         ]
     },

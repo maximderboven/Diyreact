@@ -171,7 +171,9 @@ class DiyreactParser extends CstParser {
             $.MANY(() => {
                 $.SUBRULE($.jsxContent)
             })
-            $.CONSUME(OpenEndAngleBracket)
+            $.CONSUME(OpenEndAngleBracket, {
+                ERR_MSG: "Missing closing tag"
+            })
             $.CONSUME1(Identifier)
             $.CONSUME1(CloseAngleBracket)
         })
@@ -245,7 +247,18 @@ class DiyreactParser extends CstParser {
 export const parserInstance = new DiyreactParser()
 export const Parser = DiyreactParser
 
+const path = require('path')
+const fs = require('fs')
+const chevrotain = require('chevrotain')
+
+export function generateDiagram() {
+    const out = path.resolve(__dirname, '../../')
+    fs.writeFileSync(out + '/diagrams.html', chevrotain.createSyntaxDiagramsCode(parserInstance.getSerializedGastProductions()))
+}
+
 export function parse(inputText) {
+    //TODO: call this with loader options
+    //generateDiagram()
     const lexResult = Lexer.tokenize(inputText)
     parserInstance.input = lexResult.tokens
     for (const error of lexResult.errors) {

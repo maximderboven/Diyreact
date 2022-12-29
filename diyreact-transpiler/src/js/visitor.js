@@ -183,6 +183,7 @@ class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
         const CloseParenthesis = ctx.CloseParenthesis[0].image
         const OpenBracket = ctx.OpenBracket[0].image
         const statement = this.visit(ctx.statement)
+        if (!ctx.CloseBracket) throw new Error('Missing close bracket')
         const CloseBracket = ctx.CloseBracket[0].image
         if (functionVariables && statement) {
             statements = []
@@ -313,8 +314,10 @@ class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
         const CloseAngleBracket = ctx.CloseAngleBracket[0].image
         const jsxExpression = this.visit(ctx.jsxExpression)
         const content = this.visit(ctx.jsxContent)
+        if(!ctx.OpenEndAngleBracket) throw Error('Missing closing tag')
         const OpenEndAngleBracket = ctx.OpenEndAngleBracket[0].image
         const Identifier1 = ctx.Identifier[1].image
+        if(Identifier1 !== Identifier) throw Error('Opening and closing tag mismatch')
         const CloseAngleBracket1 = ctx.CloseAngleBracket[1].image
         if (jsxExpression && content) {
             let expressions = []
