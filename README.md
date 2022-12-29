@@ -355,6 +355,53 @@ function render(element, container) {
     return container;
 }
 ```
+## Voorbeeld met alle functionaliteit
+Input:
+```js
+import { Diyreact } from 'diyreact'
+
+// Declaratie van variabelen en functies
+const getal = 5
+function optellen(getal, getal2) {
+    return getal + getal2
+}
+
+const optelling = optellen(getal, 2)
+console.log(optelling)
+
+const naam = "Maxim Derboven"
+console.log(naam)
+
+function App() {
+    return <div>
+            <h1>Welkom bij DIYReact</h1>
+            <p>Deze tekst is een paragraaf</p>
+        </div>
+}
+
+const element = App()
+
+Diyreact.render(element, root)
+```
+Output:
+```js
+import { Diyreact } from 'diyreact'
+const getal = 5
+function optellen (getal,getal2) {
+return getal + getal2
+}
+const optelling = optellen(getal,2)
+console.log(optelling)
+const naam = "Maxim Derboven"
+console.log(naam)
+function App () {
+return Diyreact.createElement("div",[Diyreact.createElement("h1",["Welkom bij DIYReact "]),Diyreact.createElement("p",["Deze tekst is een paragraaf "])])
+}
+const element = App()
+Diyreact.render(element,root)
+```
+
+
 ## Opties voor de webpack loader
 De webpack plugin kan je opties meegeven en zo kan de preprocessor zich anders gedragen. 
 Om dit uit te testen heb ik het simpel gehouden en enkel een methode uitgewerkt waarmee je een Diagram kon generaten die de rules voorstelden.  
