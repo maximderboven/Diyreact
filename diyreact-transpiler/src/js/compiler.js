@@ -5,10 +5,10 @@ export function compile(input) {
     let returnString = ''
     const ast = V.visit(input)
 
-    //program as start otherwise there is someting wrong
-    if (ast.program.length > 0) {
-        for (let index = 0; index < ast.program.length; index++) {
-            loadstatement(ast.program[index].statement)
+    //root as start otherwise there is someting wrong
+    if (ast.root.length > 0) {
+        for (let index = 0; index < ast.root.length; index++) {
+            loadstatement(ast.root[index].statement)
         }
     }
 
@@ -44,8 +44,8 @@ export function compile(input) {
      */
     function loadimportstatement(element) {
         returnString += 'import '
-        if (element.AsteriskImport) {
-            returnString += `* as  ${element.AsteriskImport.ImportName} from `
+        if (element.asteriskImport) {
+            returnString += `* as  ${element.asteriskImport.ImportName} from `
         } else if (element.curlyImport) {
             returnString += `{ ${element.curlyImport.ImportName} } from `
         } else if (element.ImportName) {

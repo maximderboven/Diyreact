@@ -8,7 +8,7 @@ test('test cst - VAR DECLARATION', () => {
 const x = 2
     `
     const cst = P.parse(input)
-    assert.equal(cst.name, "program")
+    assert.equal(cst.name, "root")
     assert.equal(cst.children.statement[0].name, "statement")
     assert.equal(cst.children.statement[0].children.variableDeclaration[0].name, "variableDeclaration")
     assert.equal(cst.children.statement[0].children.variableDeclaration[0].children.VarDeclaration[0].image, "const")
@@ -26,7 +26,7 @@ test('test cst - IMPORT STATEMENT', () => {
 import {x} from "y"
     `
     const cst = P.parse(input)
-    assert.equal(cst.name, "program")
+    assert.equal(cst.name, "root")
     assert.equal(cst.children.statement[0].name, "statement")
     assert.equal(cst.children.statement[0].children.importStatement[0].name, "importStatement")
     assert.equal(cst.children.statement[0].children.importStatement[0].children.Import[0].image, "import")
@@ -46,7 +46,7 @@ test('test cst - EXPORT STATEMENT', () => {
 export x
     `
     const cst = P.parse(input)
-    assert.equal(cst.name, "program")
+    assert.equal(cst.name, "root")
     assert.equal(cst.children.statement[0].name, "statement")
     assert.equal(cst.children.statement[0].children.exportStatement[0].name, "exportStatement")
     assert.equal(cst.children.statement[0].children.exportStatement[0].children.Export[0].image, "export")
@@ -59,7 +59,7 @@ test('test cst - RETURN STATEMENT', () => {
 return x
     `
     const cst = P.parse(input)
-    assert.equal(cst.name, "program")
+    assert.equal(cst.name, "root")
     assert.equal(cst.children.statement[0].name, "statement")
     assert.equal(cst.children.statement[0].children.returnStatement[0].name, "returnStatement")
     assert.equal(cst.children.statement[0].children.returnStatement[0].children.Return[0].image, "return")
@@ -76,7 +76,7 @@ function x() {
 }
     `
     const cst = P.parse(input)
-    assert.equal(cst.name, "program")
+    assert.equal(cst.name, "root")
     assert.equal(cst.children.statement[0].name, "statement")
     assert.equal(cst.children.statement[0].children.functionDeclaration[0].name, "functionDeclaration")
     assert.equal(cst.children.statement[0].children.functionDeclaration[0].children.Identifier[0].image, "x")
@@ -95,7 +95,7 @@ test('test cst - JSX EXPRESSION', () => {
 const x = <p>test<strong>test2</strong></p>
     `
     const cst = P.parse(input)
-    assert.equal(cst.name, "program")
+    assert.equal(cst.name, "root")
     assert.equal(cst.children.statement[0].name, "statement")
     //assert equal for cst; p, test, strong, test2
     assert.equal(cst.children.statement[0].children.variableDeclaration[0].children.jsxExpression[0].children.Identifier[0].image, 'p');
@@ -111,7 +111,7 @@ describe('CST test - function calls', () => {
     it("Function call", () => {
         const input = "test(1,2,3)"
         const cst = P.parse(input)
-        assert.equal(cst.name, "program")
+        assert.equal(cst.name, "root")
         assert.equal(cst.children.statement[0].name, "statement")
         assert.equal(cst.children.statement[0].children.callFunction[0].name, "callFunction")
         assert.equal(cst.children.statement[0].children.callFunction[0].children.Identifier[0].image, "test")
@@ -127,7 +127,7 @@ describe('CST test - function calls', () => {
     it("Function call on object", () => {
         const input = "test.test2(1,2,3)"
         const cst = P.parse(input)
-        assert.equal(cst.name, "program")
+        assert.equal(cst.name, "root")
         assert.equal(cst.children.statement[0].children.callFunction[0].children.Identifier[0].image, "test")
         assert.equal(cst.children.statement[0].children.callFunction[0].children.Identifier[1].image, "test2")
         assert.equal(cst.children.statement[0].children.callFunction[0].children.Point[0].image, ".")

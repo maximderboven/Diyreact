@@ -1,6 +1,6 @@
 grammar DiyReact;
 
-program: statement+;
+root: statement+;
 
 statement: importStatement | exportStatement | functionDeclaration | variableDeclaration | returnStatement | callFunction;
 

@@ -13,13 +13,24 @@ const x = 2
     assert.equal(js, "const x = 2 \n")
 })
 
-test ('test end-to-end - IMPORT STATEMENT', () => {
+test ('test end-to-end - {} IMPORT STATEMENT', () => {
     const input = `
 import {x} from "y"
     `
     const js = C.compile(input)
     assert.equal(js, "import { x } from \"y\" \n")
 })
+
+test ('test end-to-end - * IMPORT STATEMENT', () => {
+    const input = `
+import * as test from "y"
+    `
+    const P = require("../src/js/parser");
+    const cst = P.parse(input)
+    const js = C.compile(input)
+    assert.equal(js, "import * as  test from \"y\" \n")
+})
+
 
 
 test('test2', () => {
@@ -57,7 +68,7 @@ function App() {
 }
 
 const element = <div><h1>Derboven Maxim</h1><div><p>This is a paragraph</p></div></div>
-const element2 = <div><h1>Programmeren 3</h1><div><p>Hij ondersteunt <i>gelukkig</i> ook nummers, anders was het <strong>programmeren drie</strong></p></div></div>
+const element2 = <div><h1>Programmeren 3</h1><div><p>Hij ondersteunt <i>gelukkig</i> ook nummers, anders was het <strong>rootmeren drie</strong></p></div></div>
 const element3 = App()
 const list = <ul><li>Item 5</li><li>Item 2</li><li>Item 3</li></ul>
 const table = <table><tr><td>Item 1</td><td>Item 2</td><td>Item 3</td></tr></table>
@@ -72,5 +83,5 @@ Diyreact.render(list, root)
 Diyreact.render(table, root)
     `
     const jscode = C.compile(input)
-    assert.equal(jscode, 'import { Diyreact } from \'diyreact\' \nconst getal = 5 \nfunction optellen (getal,getal2) { \nreturn getal + getal2 \n} \nconst optelling = optellen(2,getal) \n\nconsole.log(optelling) \nconst naam = "Maxim Derboven" \nconsole.log(naam) \nfunction App () { \nreturn Diyreact.createElement("div",[Diyreact.createElement("h1",["Welkom bij DIYReact "]),Diyreact.createElement("p",["Deze tekst is een paragraaf "])])\n} \nconst element = Diyreact.createElement("div",[Diyreact.createElement("h1",["Derboven Maxim "]),Diyreact.createElement("div",[Diyreact.createElement("p",["This is a paragraph "])])])\nconst element2 = Diyreact.createElement("div",[Diyreact.createElement("h1",["Programmeren 3 "]),Diyreact.createElement("div",[Diyreact.createElement("p",["Hij ondersteunt ",Diyreact.createElement("i",["gelukkig "]),"ook nummers anders was het ",Diyreact.createElement("strong",["programmeren drie "])])])])\nconst element3 = App() \n\nconst list = Diyreact.createElement("ul",[Diyreact.createElement("li",["Item 5 "]),Diyreact.createElement("li",["Item 2 "]),Diyreact.createElement("li",["Item 3 "])])\nconst table = Diyreact.createElement("table",[Diyreact.createElement("tr",[Diyreact.createElement("td",["Item 1 "]),Diyreact.createElement("td",["Item 2 "]),Diyreact.createElement("td",["Item 3 "])])])\nconsole.log(element) \nconst root = document.getElementById(\'root\') \n\nDiyreact.render(element,root) \nDiyreact.render(element3,root) \nDiyreact.render(element2,root) \nDiyreact.render(list,root) \nDiyreact.render(table,root) \n')
+    assert.equal(jscode, 'import { Diyreact } from \'diyreact\' \nconst getal = 5 \nfunction optellen (getal,getal2) { \nreturn getal + getal2 \n} \nconst optelling = optellen(2,getal) \n\nconsole.log(optelling) \nconst naam = "Maxim Derboven" \nconsole.log(naam) \nfunction App () { \nreturn Diyreact.createElement("div",[Diyreact.createElement("h1",["Welkom bij DIYReact "]),Diyreact.createElement("p",["Deze tekst is een paragraaf "])])\n} \nconst element = Diyreact.createElement("div",[Diyreact.createElement("h1",["Derboven Maxim "]),Diyreact.createElement("div",[Diyreact.createElement("p",["This is a paragraph "])])])\nconst element2 = Diyreact.createElement("div",[Diyreact.createElement("h1",["Programmeren 3 "]),Diyreact.createElement("div",[Diyreact.createElement("p",["Hij ondersteunt ",Diyreact.createElement("i",["gelukkig "]),"ook nummers anders was het ",Diyreact.createElement("strong",["rootmeren drie "])])])])\nconst element3 = App() \n\nconst list = Diyreact.createElement("ul",[Diyreact.createElement("li",["Item 5 "]),Diyreact.createElement("li",["Item 2 "]),Diyreact.createElement("li",["Item 3 "])])\nconst table = Diyreact.createElement("table",[Diyreact.createElement("tr",[Diyreact.createElement("td",["Item 1 "]),Diyreact.createElement("td",["Item 2 "]),Diyreact.createElement("td",["Item 3 "])])])\nconsole.log(element) \nconst root = document.getElementById(\'root\') \n\nDiyreact.render(element,root) \nDiyreact.render(element3,root) \nDiyreact.render(element2,root) \nDiyreact.render(list,root) \nDiyreact.render(table,root) \n')
 })

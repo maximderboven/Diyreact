@@ -1,8 +1,6 @@
 const diyreactLexer = require('./lexer')
 const parser = require('./parser')
-const diyreactParser = parser.Parser
-
-const parserInstance = new diyreactParser()
+const parserInstance = new parser.Parser()
 
 class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
     constructor() {
@@ -10,8 +8,8 @@ class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
         this.validateVisitor()
     }
 
-    // Visit program : program can have multiple statements
-    program(ctx) {
+    // Visit root : root can have multiple statements
+    root(ctx) {
         if (ctx.statement) {
             const statements = []
             for (let index = 0; index < ctx.statement.length; index++) {
@@ -19,11 +17,11 @@ class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
                 statements.push(statement)
             }
             return {
-                type: 'PROGRAM', program: statements
+                type: 'ROOT', root: statements
             }
         }
         return {
-            type: 'PROGRAM'
+            type: 'ROOT'
         }
     }
 
@@ -58,14 +56,14 @@ class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
     importStatement(ctx) {
         const Import = ctx.Import[0].image
         const ImportSource = ctx.StringLiteral[0].image
-        const AsteriskImport = this.visit(ctx.AsteriskImport)
+        const asteriskImport = this.visit(ctx.asteriskImport)
         const curlyImport = this.visit(ctx.curlyImport)
-        if (AsteriskImport) {
+        if (asteriskImport) {
             const From = ctx.From[0].image
             return {
                 type: 'IMPORTSTATEMENT',
                 Import: Import,
-                AsteriskImport: AsteriskImport,
+                asteriskImport: asteriskImport,
                 From: From,
                 ImportSource: ImportSource
             }
@@ -90,8 +88,8 @@ class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
         }
     }
 
-    // Visit AsteriskImport
-    AsteriskImport(ctx) {
+    // Visit asteriskImport
+    asteriskImport(ctx) {
         const Asterisk = ctx.Asterisk[0].image
         const As = ctx.As[0].image
         const Identifier = ctx.Identifier[0].image
@@ -534,7 +532,7 @@ const vititorInstance = new DiyreactVisitor()
 export function visit(input) {
     const lexResult = diyreactLexer.tokenize(input)
     parserInstance.input = lexResult.tokens
-    const cst = parserInstance.program()
+    const cst = parserInstance.root()
     for (const error of lexResult.errors) {
         throw Error(error.message)
     }

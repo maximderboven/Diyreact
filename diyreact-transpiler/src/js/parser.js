@@ -41,8 +41,8 @@ class DiyreactParser extends CstParser {
         const $ = this
 
         //this is the top level rule
-        //program form : (statement)*
-        $.RULE('program', () => {
+        //root form : (statement)*
+        $.RULE('root', () => {
             $.MANY(() => {
                 $.SUBRULE($.statement)
             })
@@ -65,20 +65,13 @@ class DiyreactParser extends CstParser {
             $.CONSUME(Import)
             $.OPTION(() => {
                 $.OR([
-                    {ALT: () => $.SUBRULE($.AsteriskImport)},
+                    {ALT: () => $.SUBRULE($.asteriskImport)},
                     {ALT: () => $.SUBRULE($.curlyImport)},
                     {ALT: () => $.CONSUME(Identifier)}
                 ])
                 $.CONSUME(From)
             })
             $.CONSUME(StringLiteral)
-        })
-
-        //asteriskImport form : * as identifier
-        $.RULE('AsteriskImport', () => {
-            $.CONSUME(Asterisk)
-            $.CONSUME(As)
-            $.CONSUME(Identifier)
         })
 
         //curlyImport form : {identifier (, identifier)*}
@@ -91,6 +84,13 @@ class DiyreactParser extends CstParser {
                 }
             })
             $.CONSUME(CloseBracket)
+        })
+
+        //asteriskImport form : * as identifier
+        $.RULE('asteriskImport', () => {
+            $.CONSUME(Asterisk)
+            $.CONSUME(As)
+            $.CONSUME(Identifier)
         })
 
         //exportStatement form : export (default) (functionDeclaration | variableDeclaration)
@@ -264,5 +264,5 @@ export function parse(inputText) {
     for (const error of lexResult.errors) {
         throw Error(error.message)
     }
-    return parserInstance.program()
+    return parserInstance.root()
 }
