@@ -8,7 +8,7 @@ maxim.derboven@student.kdg.be
 
 # Diyreact
 
-Voor het vak programmeren 3 heb ik gewerkt aan mijn eigen simpele versie van react. Diyreact AKA Direct :) Dit heb ik gedaan met behulp van Chevrotain, chevorotain beweert de snelste te zijn in zijn soort en hiervoor moet je geen EBNF code schrijven. Dit heb ik echter wel gedaan omdat het je toch een goed overzicht geeft van je gramatica (meer daarover volgt).
+Voor het vak programmeren 3 heb ik gewerkt aan mijn eigen simpele versie van react. Diyreact AKA Direct :) Dit heb ik gedaan met behulp van Chevrotain, chevorotain beweert de snelste te zijn[1] in zijn soort en hiervoor moet je geen EBNF code schrijven. Dit heb ik echter wel gedaan omdat het je toch een goed overzicht geeft van je gramatica (meer daarover volgt).
 
 ## Installatie
 1. De eerste stap is het project clonen.
@@ -74,7 +74,7 @@ Diyreact biedt mogelijkheden voor de volgende zaken
 
 ## EBNF Gramatica
 Zoals al eerder vermeld is het bij Chevrotain niet vereist om je EBNF Gramatica uit te schrijven. Ik heb dit echter wel gedaan om een goed overzicht te krijgen van alle mogelijkheden. 
-De Gramatica is terug te vinden op [gitlab](https://gitlab.com/kdg-ti/programmeren-3/projecten-22-23/maxim.derboven/-/blob/main/diyreact-transpiler/src/grammar/DiyReact.g4), evenals het gramatica diagram [Schema](https://gitlab.com/kdg-ti/programmeren-3/projecten-22-23/maxim.derboven/-/blob/main/diyreact-transpiler/diagrams.html).
+De Gramatica is terug te vinden op [gitlab](https://gitlab.com/kdg-ti/programmeren-3/projecten-22-23/maxim.derboven/-/blob/main/diyreact-transpiler/src/grammar/DiyReact.g4), evenals het gramatica diagram [schema](https://gitlab.com/kdg-ti/programmeren-3/projecten-22-23/maxim.derboven/-/blob/main/diyreact-transpiler/diagrams.html).
 
 ## Werkwijze
 
@@ -82,13 +82,16 @@ Om met Chevrotain en JavaScript een frontend framework te maken naar analogie va
 
 1. Gebruik Chevrotain om een lexer te bouwen die de invoercode tokeniseert
 2. Een parser die een Concrete Syntax Tree (CST) construeert uit de tokens.
-3. De CST doorlopen met visitors en een Abstract Syntax Tree (AST) genereren die de structuur van de code weergeeft.
-4. De AST gebruiken om equivalente JavaScript-code te genereren die door een moderne browser kan worden uitgevoerd. Dit kan tot stand komen met document.createElement.
+3. De CST doorlopen met visitors en een Abstract Syntax Tree (AST) genereren die de structuur en inhoud van de code weergeeft.
+4. De AST gebruiken om JavaScript-code te genereren.
+5. Een externe package maken die @ runtime de code js code omzet naar create Elements (naar analogie van reactDOM)
+
+Tijdens dit voorbeeld maken we gebruik van input string: `import {x} from "y"`
 
 ## De Compiler
 ### Tokens & Lexer
 De eerste stap was om de tokens te definieren. De token representeerd een bepaald deel van de code.  
-De code 'import from' bestaat uit twee tokens.
+De code 'import from' bestaat uit twee tokens (import & from keywords).  
 Na het creeren van al de tokens voegen we ze toe aan de vocabulair die door de parser gebruikt gaat worden.
 ```js
 const Function = createToken({ name: 'Function', pattern: /function/ })
@@ -115,38 +118,109 @@ class DiyreactParser extends CstParser {
         super(diyreactVocabulary, {recoveryEnabled: true, outputCst: true})
         const $ = this
         
-        //gramatica rules
+        //gramatica regels
     }
 }
 ```
+Voorbeeld van de import Statement rule en een subrule van een soort import.
 ```js
-$.RULE('importStatement', () => {
-    $.CONSUME(Import)
-        $.OPTION(() => {
-            $.OR([
-                { ALT: () => $.SUBRULE($.astericImport) },
-                { ALT: () => $.SUBRULE($.curlyImport) },
-                { ALT: () => $.CONSUME(Identifier) }
-            ])
-            $.CONSUME(From)
+        $.RULE('importStatement', () => {
+            $.CONSUME(Import)
+            $.OPTION(() => {
+                $.OR([
+                    {ALT: () => $.SUBRULE($.asteriskImport)},
+                    {ALT: () => $.SUBRULE($.curlyImport)},
+                    {ALT: () => $.CONSUME(Identifier)}
+                ])
+                $.CONSUME(From)
+            })
+            $.CONSUME(StringLiteral)
         })
-    $.CONSUME(StringLiteral)
-})
 
-$.RULE('astericImport', () => {
-    $.CONSUME(this.Asteric)
-    $.CONSUME(As)
-    $.CONSUME(Identifier)
-})
+        $.RULE('curlyImport', () => {
+            $.CONSUME(OpenBracket)
+            $.MANY_SEP({
+                SEP: Comma,
+                DEF: () => {
+                    $.CONSUME(Identifier)
+                }
+            })
+            $.CONSUME(CloseBracket)
+        })
 ```
 Deze stap duurt een eeuwigheid aangezien je moet rekening houden met alle mogelijke opties die er zijn in je taal.  
 Zoals eerder gezegd genereert de parser een CST
 
-//VOEG IMAGE TOE
+```json
+{
+  "name": "root",
+  "children": {
+    "statement": [
+      {
+        "name": "statement",
+        "children": {
+          "importStatement": [
+            {
+              "name": "importStatement",
+              "children": {
+                "Import": [
+                  {
+                    "image": "import",
+                    [...]
+                  }
+                ],
+                "curlyImport": [
+                  {
+                    "name": "curlyImport",
+                    "children": {
+                      "OpenBracket": [
+                        {
+                          "image": "{",
+                          [...]
+                        }
+                      ],
+                      "Identifier": [
+                        {
+                          "image": "x",
+                          [...]
+                        }
+                      ],
+                      "CloseBracket": [
+                        {
+                          "image": "}",
+                          [...]
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "From": [
+                  {
+                    "image": "from",
+                    [...]
+                  }
+                ],
+                "StringLiteral": [
+                  {
+                    "image": "\"y\"",
+                    [...]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
+```
 
 ### Visitors
 
 Zodra we onze CST hebben, gaan we die omzetten in een Abstract Syntax Tree (AST). Een AST is als een CST, maar bevat specifieke informatie voor ons programma, dus geen overbodige informatie zoals puntkomma's of accolades. Om een AST te verkrijgen, moeten we elke node van de CST 'bezoeken' met behulp van een CST Visitor.
+
+In onderstaand voorbeeld bezoeken we het importstatement (zoals hierboven ook als voorbeeld gebruikt). De visitor visit elke tak van de boom tot in de puntjes en op basis van de uitkomsten maakt hij een object aan.
 
 ```js
 class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
@@ -155,49 +229,150 @@ class DiyreactVisitor extends parserInstance.getBaseCstVisitorConstructor() {
         this.validateVisitor()
     }
 
-    program(ctx) {
-        if (ctx.statement) {
-            const statements = []
-            for (let index = 0; index < ctx.statement.length; index++) {
-                const statement = this.visit(ctx.statement[index])
-                statements.push(statement)
-            }
+    // Visit importStatement
+    importStatement(ctx) {
+        const Import = ctx.Import[0].image
+        const ImportSource = ctx.StringLiteral[0].image
+        const asteriskImport = this.visit(ctx.asteriskImport)
+        const curlyImport = this.visit(ctx.curlyImport)
+        if (asteriskImport) {
+            const From = ctx.From[0].image
             return {
-                type: 'PROGRAM',
-                program: statements
+                type: 'IMPORTSTATEMENT',
+                Import: Import,
+                asteriskImport: asteriskImport,
+                From: From,
+                ImportSource: ImportSource
+            }
+        } else if (curlyImport) {
+            const From = ctx.From[0].image
+            return {
+                type: 'IMPORTSTATEMENT',
+                Import: Import,
+                curlyImport: curlyImport,
+                From: From,
+                ImportSource: ImportSource
+            }
+        } else if (ctx.Identifier) {
+            const From = ctx.From[0].image
+            const Identifier = ctx.Identifier[0].image
+            return {
+                type: 'IMPORTSTATEMENT', 
+                Import: Import, 
+                ImportName: Identifier, 
+                From: From, 
+                ImportSource: ImportSource
             }
         }
         return {
-            type: 'PROGRAM'
+            type: 'IMPORTSTATEMENT', 
+            Import: Import, 
+            ImportSource: ImportSource
         }
     }
+```
+De AST van de input na de visits ziet er zo uit:
+```json
+{
+  "type": "ROOT",
+  "root": [
+    {
+      "type": "STATEMENT",
+      "statement": {
+        "type": "IMPORTSTATEMENT",
+        "Import": "import",
+        "curlyImport": {
+          "type": "CURLYIMPORT",
+          "OpenBracket": "{",
+          "ImportName": "x",
+          "CloseBracket": "}"
+        },
+        "From": "from",
+        "ImportSource": "\"y\""
+      }
+    }
+  ]
 }
 ```
-### Loader
-De volgende stap in het proces was de loader. Hierbij moet je weer alle nodes van de AST overlopen en werkende JS code van maken.
+### Compiler / Transpiler
+
+Op basis van de AST die enkel de noodzakelijke onderdelen bevat in een (veeeel) overzichtelijkere vorm kunnen we JS code maken.  
+Hierbij bezoeken we alle nodes van de AST boom en beslissen we welke code er zou moeten gegenereert worden (returnString) (in dit geval JS want het moet door een moderne browser gelezen kunnen worden).
 
 ```js
-export function loader(source) {
-    const astFromVisitor = visit(source)
-    let returnString = ''
-    sourcePosition = 0
-
-    if (astFromVisitor.program) {
-        const splitSource = source.split(/\n/)
-        const splitSource2 = []
-        for (let index = 0; index < splitSource.length; index++) {
-            const element = splitSource[index]
-            if (element !== '' && !element.includes('//') && !element.includes('/*')) {
-                if (!element.match('<(.*)>.*?|<(.*) />') && !element.match(/^\s*$/))
-                    splitSource2.push(element)
-            }
+    function loadimportstatement(element) {
+        returnString += 'import '
+        if (element.asteriskImport) {
+            returnString += `* as  ${element.asteriskImport.ImportName} from `
+        } else if (element.curlyImport) {
+            returnString += `{ ${element.curlyImport.ImportName} } from `
+        } else if (element.ImportName) {
+            returnString += `${element.ImportName} from `
         }
-    
-    ...
+        returnString += `${element.ImportSource} \n`
+    }
+```
+Uiteindelijk komt de volgende code uit de compiler:
+`import { x } from "y"`  
+In de compiler kan ik nu zelf bepalen in welke vorm/code het er uit zal komen.
+
+### Loader
+In een apart project hebben we nu een loader gedefinieert. Deze loader staat tussen de compiler en het demo project en wordt aangesproken door webpack van de demo. 
+
+### reactDOM equivalent
+Nu hebben we een werkende compiler die JS-code kan genereren uit JSX. Om het DOM te maken heb ik er voor gekozen om dit @ runtime te doen. Zo zou je dit virtueel kunnen bewerken. 
+
+In diyreact wordt:  
+`<div>test</div>`  
+Omgezet naar:  
+`Diyreact.createElement("div",["test "])`
+
+Dit 'element' kunnen we aan de root hangen met de render functie:  
+`Diyreact.render(element, root)`
+  
+Nu maken we een aparte package met de functies render en createElement om het dom aan te maken.
+
+```js
+function createElement(tag, ...children) {
+    return {
+        tag: tag,
+        children: children
     }
 }
+
+function render(element, container) {
+    if (Array.isArray(element)) {
+        element.forEach(e => {
+            render(e, container)
+        })
+    } else if (typeof element === "string") {
+        container.appendChild(document.createTextNode(element))
+    } else {
+        const dom = document.createElement(element.tag)
+        element.children.forEach(child => render(child, dom))
+        container.appendChild(dom)
+    }
+    return container;
+}
 ```
-
-## Opties
-
+## Opties voor de webpack loader
+De webpack plugin kan je opties meegeven en zo kan de preprocessor zich anders gedragen. 
+Om dit uit te testen heb ik het simpel gehouden en enkel een methode uitgewerkt waarmee je een Diagram kon generaten die de rules voorstelden.  
+Natuurlijk is dit minimaal en biedt dit veel meer mogelijkheden, denk aan bepaalde syntaxes wijzigen.
+  
 ## Bronnen
+[1]: <https://chevrotain.io/docs/features/blazing_fast.html> "Chevrotain is Blazing fast"
+> Of.. Toch de belangrijkste;  
+ https://dev.to/nathant/how-i-built-my-own-simplified-react-with-chevrotain-typescript-webpack-3ja6  
+https://chevrotain.io/docs/tutorial/step0_introduction.html  
+https://andela.com/insights/building-your-own-version-of-react-from-scratch-part-1/  
+https://pomb.us/build-your-own-react/  
+https://webpack.js.org/contribute/writing-a-loader/  
+https://www.youtube.com/watch?v=0j91C_KfWc8  
+https://mcocirio.medium.com/build-your-own-babel-plugin-from-scratch-8db0162f983a  
+https://codepen.io/anamritraj/pen/gZVKBy  
+https://leanylabs.com/blog/js-formula-engine/  
+https://javascript.plainenglish.io/how-react-works-under-the-hood-277356c95e3d  
+
+
+**En natuurlijk de cursus programmeren 3 op canvas!!**
