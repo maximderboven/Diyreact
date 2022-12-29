@@ -6,9 +6,37 @@ maxim.derboven@student.kdg.be
 # Inhoudsopgave
 [[_TOC_]]
 
-# DIY REACT
+# Diyreact
 
-Voor het vak programmeren 3 heb ik gewerkt aan mijn eigen simpele versie van react. DiyReact AKA Direct :)
+Voor het vak programmeren 3 heb ik gewerkt aan mijn eigen simpele versie van react. Diyreact AKA Direct :)
+
+## Installatie
+1. De eerste stap is het project clonen.
+```bash
+git clone https://gitlab.com/kdg-ti/programmeren-3/projecten-22-23/maxim.derboven.git
+```
+2. In het 'diyreact-transpiler' project run je de volgende commando's. Na het builende zou er een dist folder moeten verschijnen.
+```bash
+npm install 
+npm run build
+```
+3. In het 'diyreact-loader' project voer je de volgende commandos uit.
+```bash
+npm install 
+npm run build
+```
+4. Vervolgens build je het 'diyreact-package' project met de volgende commandos
+```bash
+npm install 
+npm run build
+```
+5. Als laatste kan je het 'diyreact-demo' project opendoen met webstorm en de volgende commandos uitvoeren
+```bash
+npm install 
+npm start
+```
+Na die stap zou er in de browser volgend scherm moeten open gaan:
+![First screen when running demo opening project](https://gitlab.com/kdg-ti/programmeren-3/projecten-22-23/maxim.derboven/-/blob/main/assets/scherm_1.PNG "First screen when running demo opening project")
 
 Om met Chevrotain en JavaScript een frontend framework te maken naar analogie van React, heb ik de volgende stappen gevolgt:
 
