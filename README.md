@@ -8,7 +8,7 @@ maxim.derboven@student.kdg.be
 
 # Diyreact
 
-Voor het vak programmeren 3 heb ik gewerkt aan mijn eigen simpele versie van react. Diyreact AKA Direct :)
+Voor het vak programmeren 3 heb ik gewerkt aan mijn eigen simpele versie van react. Diyreact AKA Direct :) Dit heb ik gedaan met behulp van Chevrotain, chevorotain beweert de snelste te zijn in zijn soort en hiervoor moet je geen EBNF code schrijven. Dit heb ik echter wel gedaan omdat het je toch een goed overzicht geeft van je gramatica (meer daarover volgt).
 
 ## Installatie
 1. De eerste stap is het project clonen.
@@ -35,8 +35,48 @@ npm run build
 npm install 
 npm start
 ```
+Dit Demo project bevat al de juiste web pack configuratie om aan de slag te gaan met het processen van `.jsx` bestanden.  
+*webpack.config.js*
+```js
+            {
+                test: /\.jsx$/,
+                loader: path.resolve('../diyreact-loader/src/index.js'),
+            }
+```
 Na die stap zou er in de browser volgend scherm moeten open gaan:
-![First screen when running demo opening project](https://gitlab.com/kdg-ti/programmeren-3/projecten-22-23/maxim.derboven/-/blob/main/assets/scherm_1.PNG "First screen when running demo opening project")
+![First screen when running demo opening project](https://gitlab.com/kdg-ti/programmeren-3/projecten-22-23/maxim.derboven/-/raw/main/assets/scherm_1.PNG "First screen when running demo opening project")
+
+## Testen
+
+De testen bevinden zich in het 'diyreact-transpiler' project. Deze testen testen de cst, ast en end-to-end (of de JS klopt) van alle acties besproken in de [Ondersteuning section](#Ondersteuning).
+
+Om de testen uit te voeren voer je volgend commando uit in het transpiler project
+```bash
+npm run test
+```
+
+## Ondersteuning
+
+Diyreact biedt mogelijkheden voor de volgende zaken
+- **Variable declarations** (type x = statement of dergelijke)
+- **Import Statements** (import x,* as x, {x} from y)
+- **Return Statements** (return x)
+- **Export Statements** (export default x)
+- **Operations** (x +/* y)
+- **Function Statements** (function x() {})
+- **Function Statements with params** (function x(y,z) {})
+- **JSX Expressions** (\<p>Test\</p>)
+- **Geneste JSX Expressions** (\<p>Test \<Strong> Test2 \</Strong> Test3 \</p>)
+- **Function Call** (x())
+- **Function Call with params** (x(y,z))
+- **Function Call on object** (x.y())
+- **Function Call on object with params** (x.y(a,b))
+
+## EBNF Gramatica
+Zoals al eerder vermeld is het bij Chevrotain niet vereist om je EBNF Gramatica uit te schrijven. Ik heb dit echter wel gedaan om een goed overzicht te krijgen van alle mogelijkheden. 
+De Gramatica is terug te vinden op [gitlab](https://gitlab.com/kdg-ti/programmeren-3/projecten-22-23/maxim.derboven/-/blob/main/diyreact-transpiler/src/grammar/DiyReact.g4), evenals het gramatica diagram [Schema](https://gitlab.com/kdg-ti/programmeren-3/projecten-22-23/maxim.derboven/-/blob/main/diyreact-transpiler/diagrams.html).
+
+## Werkwijze
 
 Om met Chevrotain en JavaScript een frontend framework te maken naar analogie van React, heb ik de volgende stappen gevolgt:
 
@@ -158,17 +198,6 @@ export function loader(source) {
 }
 ```
 
-# Gebruiken in een project
-Om de compiler als loader te gebruiken binnen een project voeg je dit toe aan je `rules` in je `webpack.config.js`
-
-            {
-                test: /\.jsx$/,
-                use: [
-                    {loader: 'diyreact-parser'}
-                ]
-            }
-
-De `test` geeft aan dat het automatisch files parsed die op `.jsx` eindigen.
-
 ## Opties
-### Test
+
+## Bronnen
