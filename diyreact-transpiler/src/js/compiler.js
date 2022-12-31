@@ -102,6 +102,7 @@ export function compile(input) {
         returnString += '\n'
     }
 
+    //TODO: Add support for styling 'classname=x' or props given in a jsxExpression tag
     function loadJSX(element, parent) {
         returnString += `Diyreact.createElement("${element.Identifier}",[`
         for (let index = 0; index < element.jsxContent.length; index++) {
